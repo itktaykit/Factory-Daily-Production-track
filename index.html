@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ktaykit Factory — Daily Production Management System</title>
+  <title>Ktaykit Factory — Cloud Production Management System</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,35 +22,6 @@
   <!-- jsPDF + AutoTable for PDF Export -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
-
-  <!-- Firebase Modular SDK (v11.6.1) for Global Cloud Database & Real-Time Sync -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    window.FB = {
-      initializeApp,
-      getAuth,
-      signInAnonymously,
-      signInWithCustomToken,
-      onAuthStateChanged,
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      deleteDoc,
-      onSnapshot,
-      collection,
-      getDocs,
-      writeBatch
-    };
-
-    if (typeof window.bootFirebaseCloud === 'function') {
-      window.bootFirebaseCloud();
-    }
-  </script>
 
   <script>
     tailwind.config = {
@@ -138,11 +109,11 @@
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Confirmation / Prompt Modal -->
+  <!-- Confirmation Modal -->
   <div id="confirm-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6">
       <div class="flex items-start gap-3">
-        <div id="confirm-icon-wrap" class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
           <i data-lucide="alert-triangle" class="w-5 h-5"></i>
         </div>
         <div class="flex-1">
@@ -161,14 +132,14 @@
   <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
     <div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-700/40">
       
-      <!-- Left Industrial Branding Panel -->
+      <!-- Left Branding Panel -->
       <div class="lg:col-span-5 bg-slate-900 text-white p-8 flex flex-col justify-between relative overflow-hidden">
         <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-orange-500/10 blur-2xl"></div>
         <div class="absolute -left-12 -bottom-12 w-56 h-56 rounded-full bg-amber-500/10 blur-2xl"></div>
 
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-orange-500/15 border border-orange-500/30 text-orange-400 text-xs font-semibold tracking-wider uppercase mb-6">
-            <i data-lucide="factory" class="w-4 h-4"></i>
+            <i data-lucide="database" class="w-4 h-4"></i>
             Cloud ERP Database
           </div>
           <h1 class="text-3xl font-extrabold tracking-tight text-white">
@@ -181,16 +152,16 @@
 
         <div class="relative z-10 my-8 space-y-3">
           <div class="flex items-center gap-3 text-xs text-slate-300 bg-slate-800/80 p-3 rounded-xl border border-slate-700/70">
-            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400 shrink-0"></i>
-            <span>Role-Based Screen &amp; Action Access Control</span>
+            <i data-lucide="cloud-cog" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+            <span>Firebase Cloud Storage &amp; Real-Time Multi-Device Sync</span>
           </div>
           <div class="flex items-center gap-3 text-xs text-slate-300 bg-slate-800/80 p-3 rounded-xl border border-slate-700/70">
-            <i data-lucide="table-2" class="w-5 h-5 text-orange-400 shrink-0"></i>
+            <i data-lucide="shield-check" class="w-5 h-5 text-orange-400 shrink-0"></i>
+            <span>Role-Based Screen &amp; Action Permissions</span>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-slate-300 bg-slate-800/80 p-3 rounded-xl border border-slate-700/70">
+            <i data-lucide="table-2" class="w-5 h-5 text-sky-400 shrink-0"></i>
             <span>Click-to-Edit Full Month Spreadsheet with Auto-Averages</span>
-          </div>
-          <div class="flex items-center gap-3 text-xs text-slate-300 bg-slate-800/80 p-3 rounded-xl border border-slate-700/70">
-            <i data-lucide="globe" class="w-5 h-5 text-sky-400 shrink-0"></i>
-            <span>Online Access Anywhere with Firebase Cloud Database</span>
           </div>
         </div>
 
@@ -198,7 +169,7 @@
           <span>June 2026 Dataset Preloaded</span>
           <span id="login-cloud-badge" class="font-mono text-emerald-400 flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Cloud DB Ready
+            Cloud Ready
           </span>
         </div>
       </div>
@@ -209,7 +180,7 @@
           <div class="flex items-center justify-between gap-2">
             <h2 class="text-2xl font-bold text-slate-900">Operator Sign In</h2>
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
-              <i data-lucide="database" class="w-3.5 h-3.5"></i>
+              <i data-lucide="globe" class="w-3.5 h-3.5"></i>
               Cloud Database Active
             </span>
           </div>
@@ -246,7 +217,6 @@
           </button>
         </form>
 
-        <!-- Quick Demo Login Presets -->
         <div class="mt-7 pt-6 border-t border-slate-200">
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Quick Demo Role Login</p>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -302,7 +272,7 @@
           </div>
         </div>
 
-        <!-- Global Period Controls (Year & Month) -->
+        <!-- Global Controls -->
         <div class="flex items-center gap-2.5">
           <button onclick="openDbInspectorModal()" title="View Cloud Database Architecture & System Info"
             class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold transition cursor-pointer">
@@ -324,7 +294,7 @@
           </div>
         </div>
 
-        <!-- Current User & Logout -->
+        <!-- User & Logout -->
         <div class="flex items-center gap-2.5">
           <div class="text-right hidden md:block">
             <div id="header-user-name" class="text-xs font-bold text-white">Administrator</div>
@@ -338,11 +308,9 @@
         </div>
       </div>
 
-      <!-- Primary Screen Navigation Tabs -->
+      <!-- Navigation Tabs -->
       <div class="bg-slate-950/60 border-t border-slate-800/80">
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 flex items-center gap-1.5 overflow-x-auto py-2" id="main-nav-tabs">
-          <!-- Rendered via JS -->
-        </div>
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 flex items-center gap-1.5 overflow-x-auto py-2" id="main-nav-tabs"></div>
       </div>
     </header>
 
@@ -351,7 +319,6 @@
 
       <!-- ==================== SCREEN 1: DAILY PRODUCTION GRID ==================== -->
       <section id="screen-daily" class="hidden space-y-5">
-        <!-- Top KPI Summary Strip -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
             <div class="flex items-center justify-between text-xs font-semibold text-slate-500">
@@ -390,7 +357,6 @@
           </div>
         </div>
 
-        <!-- Category Switcher & Action Toolbar -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-4 space-y-4">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             <div id="category-tabs-bar" class="flex items-center gap-2 flex-wrap"></div>
@@ -403,7 +369,6 @@
             </div>
           </div>
 
-          <!-- Search & Action Toolbar -->
           <div class="pt-3 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div class="flex items-center gap-2.5 flex-1">
               <div class="relative flex-1 max-w-sm">
@@ -413,7 +378,7 @@
               </div>
               <span class="hidden xl:inline-flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
                 <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-orange-500"></i>
-                Click any date cell to edit &amp; save
+                Click any date cell to edit &amp; save to Cloud
               </span>
             </div>
 
@@ -446,7 +411,6 @@
           </div>
         </div>
 
-        <!-- Full-Month Interactive Spreadsheet Table -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="overflow-x-auto grid-scroll max-h-[68vh]">
             <table class="w-full border-collapse text-xs">
@@ -458,7 +422,7 @@
         </div>
       </section>
 
-      <!-- ==================== SCREEN 2: ONE-PAGE MONTHLY SUMMARY REPORT ==================== -->
+      <!-- ==================== SCREEN 2: MONTHLY SUMMARY REPORT ==================== -->
       <section id="screen-monthly" class="hidden space-y-5">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
           <div>
@@ -505,7 +469,7 @@
         </div>
       </section>
 
-      <!-- ==================== SCREEN 3: YEARLY PRODUCTION OVERVIEW ==================== -->
+      <!-- ==================== SCREEN 3: YEARLY OVERVIEW ==================== -->
       <section id="screen-yearly" class="hidden space-y-5">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -538,7 +502,7 @@
         <div id="yearly-categories-container" class="space-y-6"></div>
       </section>
 
-      <!-- ==================== SCREEN 4: PRODUCT CATALOG & CATEGORIES ==================== -->
+      <!-- ==================== SCREEN 4: PRODUCT CATALOG ==================== -->
       <section id="screen-catalog" class="hidden space-y-5">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -567,7 +531,7 @@
         <div id="catalog-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-5"></div>
       </section>
 
-      <!-- ==================== SCREEN 5: USER & ROLE MANAGEMENT (ADMIN) ==================== -->
+      <!-- ==================== SCREEN 5: USERS & PERMISSIONS ==================== -->
       <section id="screen-users" class="hidden space-y-5">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -583,7 +547,7 @@
             <button onclick="openDbInspectorModal()"
               class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 transition flex items-center gap-1.5 cursor-pointer">
               <i data-lucide="database" class="w-3.5 h-3.5"></i>
-              Database Architecture
+              Cloud Database Architecture
             </button>
             <button onclick="resetToJune2026Sample()"
               class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 transition flex items-center gap-1.5 cursor-pointer">
@@ -619,7 +583,7 @@
     </main>
   </div>
 
-  <!-- ==================== MODAL: QUICK DAILY ENTRY ==================== -->
+  <!-- ==================== MODALS ==================== -->
   <div id="quick-entry-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -665,7 +629,6 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: ADD / EDIT CATEGORY ==================== -->
   <div id="category-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -694,7 +657,6 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: ADD / EDIT PRODUCT ITEM ==================== -->
   <div id="product-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -744,7 +706,6 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: USER & PERMISSIONS ==================== -->
   <div id="user-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -786,59 +747,30 @@
           </div>
         </div>
 
-        <!-- Screen Permissions -->
         <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200">
           <div class="text-xs font-bold text-slate-800 mb-2.5 flex items-center gap-1.5">
             <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-orange-600"></i>
             Allowed System Screens
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-screen-daily" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>Daily Production Grid</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-screen-monthly" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>Monthly Summary Report</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-screen-yearly" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>Yearly Overview</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-screen-catalog" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>Product Catalog &amp; Categories</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-screen-users" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>User &amp; Role Management</span>
-            </label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-screen-daily" class="rounded text-orange-600" /> Daily Grid</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-screen-monthly" class="rounded text-orange-600" /> Monthly Summary</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-screen-yearly" class="rounded text-orange-600" /> Yearly Overview</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-screen-catalog" class="rounded text-orange-600" /> Product Catalog</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-screen-users" class="rounded text-orange-600" /> User Management</label>
           </div>
         </div>
 
-        <!-- Action Permissions -->
         <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200">
           <div class="text-xs font-bold text-slate-800 mb-2.5 flex items-center gap-1.5">
             <i data-lucide="key-round" class="w-3.5 h-3.5 text-orange-600"></i>
-            Operational Action Permissions
+            Operational Actions
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-act-edit" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>Can Edit / Save Cells</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-act-delete" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>Can Delete Entries</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-act-catalog" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>Can Manage Products / Categories</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="perm-act-io" class="rounded text-orange-600 focus:ring-orange-500" />
-              <span>Can Import / Export Excel &amp; PDF</span>
-            </label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-act-edit" class="rounded text-orange-600" /> Can Edit / Save Cells</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-act-delete" class="rounded text-orange-600" /> Can Delete Entries</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-act-catalog" class="rounded text-orange-600" /> Can Manage SKUs</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="perm-act-io" class="rounded text-orange-600" /> Can Import / Export</label>
           </div>
         </div>
 
@@ -850,7 +782,6 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: DATABASE INSPECTOR ==================== -->
   <div id="db-inspector-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -871,9 +802,9 @@
             <div id="db-info-status" class="text-[11px] font-mono text-emerald-600 mt-0.5">Live Real-Time Sync Active</div>
           </div>
           <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <div class="text-slate-500 font-semibold">Workspace App ID</div>
-            <div id="db-info-appid" class="text-xs font-mono font-bold text-slate-900 mt-1 break-all">ktaykit-factory-default</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">Multi-device shared namespace</div>
+            <div class="text-slate-500 font-semibold">Project ID</div>
+            <div id="db-info-appid" class="text-xs font-mono font-bold text-slate-900 mt-1 break-all">ktaykit-factory</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Connected Firebase Project</div>
           </div>
           <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
             <div class="text-slate-500 font-semibold">Authenticated Session UID</div>
@@ -913,13 +844,23 @@
     </div>
   </div>
 
-  <!-- ==================== APPLICATION SCRIPT ==================== -->
+  <!-- ==================== FIREBASE CLOUD SCRIPT ==================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Preloaded June 2026 data from original Ktaykit Factory Excel ledger
+    // Your exact Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDC9j-vKoWRUnVlwLHwTSGkpfGfmQL73JA",
+      authDomain: "ktaykit-factory.firebaseapp.com",
+      projectId: "ktaykit-factory",
+      storageBucket: "ktaykit-factory.firebasestorage.app",
+      messagingSenderId: "994021467636",
+      appId: "1:994021467636:web:ea37b9f36ceb70bb56c5a1",
+      measurementId: "G-SVRBH2G1G4"
+    };
+
     const RAW_JUNE_2026_DATA = {
       "s1": [
         {"code":"FCHR1000","name":"KTAYKIT","unit":"PCS","daily":{"1":884,"2":852,"3":784,"4":960,"5":996,"6":800,"7":796,"8":590,"9":772,"10":804,"11":1084,"12":996,"13":700,"14":788,"15":704,"16":756,"17":768,"18":1060,"19":939,"20":752,"21":668,"22":680,"23":676,"24":788,"25":896,"26":808,"27":876,"28":881,"29":940,"30":840}},
@@ -1027,8 +968,8 @@
       "July", "August", "September", "October", "November", "December"
     ];
 
-    const SESSION_KEY = 'ktaykit_erp_session_v2';
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'ktaykit-factory-default';
+    const SESSION_KEY = 'ktaykit_erp_session_v3';
+    const appId = firebaseConfig.projectId;
     
     let db = null;
     let auth = null;
@@ -1043,7 +984,7 @@
       activeScreen: 'daily',
       activeCategoryId: 'cat_1',
       selectedYear: 2026,
-      selectedMonth: 6, // June
+      selectedMonth: 6,
       searchQuery: '',
       editingCell: null,
       firestoreLoadedFlags: { users: false, categories: false, production: false },
@@ -1224,23 +1165,13 @@
       appState.production = initial.production;
 
       try {
-        if (typeof __firebase_config === 'undefined') {
-          updateCloudBadge('offline', 'Local Memory Mode');
-          return;
-        }
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
 
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = window.FB.initializeApp(firebaseConfig);
-        auth = window.FB.getAuth(app);
-        db = window.FB.getFirestore(app);
-
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          const cred = await window.FB.signInWithCustomToken(auth, __initial_auth_token);
-          firebaseUser = cred.user;
-        } else {
-          const cred = await window.FB.signInAnonymously(auth);
-          firebaseUser = cred.user;
-        }
+        // Sign in anonymously for robust cloud connectivity
+        const cred = await signInAnonymously(auth);
+        firebaseUser = cred.user;
 
         cloudConnected = true;
         updateCloudBadge('live', 'Cloud Connected • Live');
@@ -1255,7 +1186,7 @@
           }
         };
 
-        window.FB.onSnapshot(publicCollection('ktaykit_users'), (snap) => {
+        onSnapshot(publicCollection('ktaykit_users'), (snap) => {
           if (!snap.empty) {
             appState.users = snap.docs.map(d => d.data());
           } else if (appState.firestoreLoadedFlags.users) {
@@ -1269,7 +1200,7 @@
           }
         });
 
-        window.FB.onSnapshot(publicCollection('ktaykit_categories'), (snap) => {
+        onSnapshot(publicCollection('ktaykit_categories'), (snap) => {
           if (!snap.empty) {
             const loaded = snap.docs.map(d => d.data());
             loaded.sort((a, b) => (a.order || 99) - (b.order || 99));
@@ -1282,7 +1213,7 @@
           if (appState.currentUser && !appState.editingCell) refreshCurrentScreen();
         });
 
-        window.FB.onSnapshot(publicCollection('ktaykit_production'), (snap) => {
+        onSnapshot(publicCollection('ktaykit_production'), (snap) => {
           if (!snap.empty) {
             const nextProd = {};
             snap.docs.forEach(d => {
@@ -1791,7 +1722,7 @@
       appState.editingCell = null;
       updateDailyKPIs();
       renderDailyGrid();
-      if (showFeedback) showToast(`Saved Day ${day}: ${formatNumber(parsed)}`, 'success');
+      if (showFeedback) showToast(`Saved Day ${day}: ${formatNumber(parsed)} to Cloud`, 'success');
       setTimeout(() => { isCommitting = false; }, 60);
     }
 
@@ -2025,7 +1956,7 @@
           cat.items = cat.items.filter(i => i.code !== itemCode);
           await saveCategoryToCloud(cat);
           refreshCurrentScreen();
-          showToast('Product deleted', 'info');
+          showToast('Product deleted from Cloud', 'info');
         }
       });
     }
@@ -2075,7 +2006,7 @@
         appState.users = appState.users.filter(u => u.id !== userId);
         await deleteUserFromCloud(userId);
         renderUsersScreen();
-        showToast('User removed', 'info');
+        showToast('User removed from Cloud', 'info');
       });
     }
 
@@ -2093,7 +2024,7 @@
 
         populatePeriodSelectors();
         refreshCurrentScreen();
-        showToast('Restored June 2026 dataset', 'success');
+        showToast('Restored June 2026 dataset in Cloud', 'success');
       });
     }
 
@@ -2206,7 +2137,7 @@
           await saveCategoryToCloud(cat);
           await savePeriodProductionToCloud(getPeriodKey());
           refreshCurrentScreen();
-          showToast('Excel imported and synced', 'success');
+          showToast('Excel imported and synced to Cloud', 'success');
         } catch (err) {
           showToast('Import failed. Check Excel format.', 'error');
         } finally {
@@ -2359,7 +2290,7 @@
         appState.activeCategoryId = catId;
         closeModal('quick-entry-modal');
         refreshCurrentScreen();
-        showToast(`Saved ${code} Day ${day}: ${formatNumber(qty)}`, 'success');
+        showToast(`Saved ${code} Day ${day}: ${formatNumber(qty)} to Cloud`, 'success');
       });
 
       document.getElementById('category-form').addEventListener('submit', async (e) => {
@@ -2381,7 +2312,7 @@
         }
         closeModal('category-modal');
         refreshCurrentScreen();
-        showToast('Category saved', 'success');
+        showToast('Category saved to Cloud', 'success');
       });
 
       document.getElementById('product-form').addEventListener('submit', async (e) => {
@@ -2407,7 +2338,7 @@
         await saveCategoryToCloud(targetCat);
         closeModal('product-modal');
         refreshCurrentScreen();
-        showToast('Product saved', 'success');
+        showToast('Product saved to Cloud', 'success');
       });
 
       document.getElementById('user-form').addEventListener('submit', async (e) => {
@@ -2450,7 +2381,7 @@
         }
         closeModal('user-modal');
         renderUsersScreen();
-        showToast('User saved', 'success');
+        showToast('User saved to Cloud', 'success');
       });
 
       const savedSession = sessionStorage.getItem(SESSION_KEY);
