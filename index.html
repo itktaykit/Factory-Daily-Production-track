@@ -378,15 +378,16 @@
               </div>
               <span class="hidden xl:inline-flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
                 <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-orange-500"></i>
-                Click any date cell to edit &amp; save to Cloud
+                Click any date cell to edit &amp; update database
               </span>
             </div>
 
+            <!-- Action Toolbar with Explicit Add, Modify and Update Button -->
             <div class="flex items-center gap-2 flex-wrap">
-              <button id="btn-quick-entry" onclick="openQuickEntryModal()"
+              <button id="btn-main-add-modify" onclick="openQuickEntryModal()"
                 class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer">
-                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-                Quick Daily Entry
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                Add, Modify and Update
               </button>
 
               <input type="file" id="excel-import-input" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleExcelImport(event)" />
@@ -589,7 +590,7 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="edit-3" class="w-4 h-4 text-orange-600"></i>
-          Daily Production Entry
+          Add, Modify and Update Production
         </h3>
         <button onclick="closeModal('quick-entry-modal')" class="text-slate-400 hover:text-slate-700 cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -623,7 +624,7 @@
         </div>
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('quick-entry-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Save Entry</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Database</button>
         </div>
       </form>
     </div>
@@ -651,7 +652,7 @@
         </div>
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('category-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Save Category</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Database</button>
         </div>
       </form>
     </div>
@@ -700,7 +701,7 @@
         </div>
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('product-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Save Product</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Database</button>
         </div>
       </form>
     </div>
@@ -776,7 +777,7 @@
 
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('user-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Save User Account</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Database</button>
         </div>
       </form>
     </div>
@@ -847,10 +848,9 @@
   <!-- ==================== FIREBASE CLOUD SCRIPT ==================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Your exact Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDC9j-vKoWRUnVlwLHwTSGkpfGfmQL73JA",
       authDomain: "ktaykit-factory.firebaseapp.com",
@@ -968,7 +968,7 @@
       "July", "August", "September", "October", "November", "December"
     ];
 
-    const SESSION_KEY = 'ktaykit_erp_session_v3';
+    const SESSION_KEY = 'ktaykit_erp_v4';
     const appId = firebaseConfig.projectId;
     
     let db = null;
@@ -1169,7 +1169,6 @@
         auth = getAuth(app);
         db = getFirestore(app);
 
-        // Sign in anonymously for robust cloud connectivity
         const cred = await signInAnonymously(auth);
         firebaseUser = cred.user;
 
@@ -1488,7 +1487,7 @@
       };
 
       toggleDisplay('btn-add-category-inline', canCatalog);
-      toggleDisplay('btn-quick-entry', canEdit);
+      toggleDisplay('btn-main-add-modify', canEdit);
       toggleDisplay('btn-import-excel', canIO && canEdit);
       toggleDisplay('btn-export-excel', canIO);
       toggleDisplay('btn-export-pdf', canIO);
@@ -1722,7 +1721,7 @@
       appState.editingCell = null;
       updateDailyKPIs();
       renderDailyGrid();
-      if (showFeedback) showToast(`Saved Day ${day}: ${formatNumber(parsed)} to Cloud`, 'success');
+      if (showFeedback) showToast(`Successfully updated Day ${day}: ${formatNumber(parsed)} in Cloud Database`, 'success');
       setTimeout(() => { isCommitting = false; }, 60);
     }
 
@@ -1735,7 +1734,7 @@
           await savePeriodProductionToCloud(pKey);
         }
         renderDailyScreen();
-        showToast('Row entries cleared', 'info');
+        showToast('Row entries cleared from Cloud', 'info');
       });
     }
 
@@ -2290,7 +2289,7 @@
         appState.activeCategoryId = catId;
         closeModal('quick-entry-modal');
         refreshCurrentScreen();
-        showToast(`Saved ${code} Day ${day}: ${formatNumber(qty)} to Cloud`, 'success');
+        showToast(`Successfully updated [${code}] Day ${day}: ${formatNumber(qty)} in Cloud Database`, 'success');
       });
 
       document.getElementById('category-form').addEventListener('submit', async (e) => {
@@ -2312,7 +2311,7 @@
         }
         closeModal('category-modal');
         refreshCurrentScreen();
-        showToast('Category saved to Cloud', 'success');
+        showToast('Category updated and saved to Cloud Database', 'success');
       });
 
       document.getElementById('product-form').addEventListener('submit', async (e) => {
@@ -2338,7 +2337,7 @@
         await saveCategoryToCloud(targetCat);
         closeModal('product-modal');
         refreshCurrentScreen();
-        showToast('Product saved to Cloud', 'success');
+        showToast('Product updated and saved to Cloud Database', 'success');
       });
 
       document.getElementById('user-form').addEventListener('submit', async (e) => {
@@ -2381,7 +2380,7 @@
         }
         closeModal('user-modal');
         renderUsersScreen();
-        showToast('User saved to Cloud', 'success');
+        showToast('User updated in Cloud Database', 'success');
       });
 
       const savedSession = sessionStorage.getItem(SESSION_KEY);
