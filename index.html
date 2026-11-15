@@ -893,7 +893,6 @@
     const appId = firebaseConfig.projectId;
     let cloudConnected = false;
 
-    // Default to current date (Nov 2026)
     const now = new Date();
     let appState = {
       users: [],
@@ -2064,7 +2063,6 @@
       showToast('Excel exported', 'success');
     }
 
-    // CUSTOM DATE RANGE EXCEL EXPORT
     function exportCustomRangeMonthlyExcel() {
       if (!hasActionAccess('io')) return;
       const startDateStr = document.getElementById('monthly-start-date').value;
@@ -2087,7 +2085,6 @@
       showToast('Custom range Excel exported successfully!', 'success');
     }
 
-    // OPEN BATCH UPDATE MODAL & DETECT MONTH
     function openBatchUpdateModal() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
       document.getElementById('batch-file-input').value = '';
@@ -2112,7 +2109,7 @@
       };
     }
 
-    // BATCH OVERWRITE & UPDATE WHOLE SHEET INTO FIRESTORE
+    // ROBUST BATCH OVERWRITE & UPDATE FUNCTION (FIXED FOR ALL DATASETS)
     function executeBatchUpdate() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
       const fileInput = document.getElementById('batch-file-input');
@@ -2134,19 +2131,22 @@
             const wb = XLSX.read(data, { type: 'array' });
             
             const pKey = `${targetYear}-${targetMonth}`;
-            // Completely fresh ledger for this period (overwrite)
             const newPeriodLedger = {};
             let totalMatchedRows = 0;
 
-            // Iterate over all sheets in the Excel workbook
             wb.SheetNames.forEach(sheetName => {
-              const jsonRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval: '' });
+              const ws = wb.Sheets[sheetName];
+              const jsonRows = XLSX.utils.sheet_to_json(ws, { defval: '' });
               
               jsonRows.forEach(row => {
-                const codeKey = Object.keys(row).find(k => /^(code|item\s*code)$/i.test(k.trim()));
-                const nameKey = Object.keys(row).find(k => /^(items?|item\s*name|product)$/i.test(k.trim()));
+                const keys = Object.keys(row);
+                
+                const codeKey = keys.find(k => /^(code|item\s*code|sku)$/i.test(k.trim())) || keys[0];
+                const nameKey = keys.find(k => /^(items?|item\s*name|product|description)$/i.test(k.trim())) || keys[1];
+                
                 const code = String(row[codeKey] || '').trim().toUpperCase();
                 const name = String(row[nameKey] || '').trim();
+                
                 if (!code && !name) return;
 
                 let foundCat = null;
@@ -2164,11 +2164,16 @@
                   }
                 }
 
-                if (!foundCat) {
-                  // Fallback category if not found in catalog
-                  foundCat = appState.categories[0];
-                  foundItem = { code: code || ('SKU' + Date.now()), name: name || code, unit: 'PCS' };
-                  foundCat.items.push(foundItem);
+                if (!foundCat || !foundItem) {
+                  foundCat = appState.categories.find(c => c.id === appState.activeCategoryId) || appState.categories[0];
+                  foundItem = { 
+                    code: code || ('SKU' + Math.floor(Math.random() * 90000 + 10000)), 
+                    name: name || code, 
+                    unit: 'PCS' 
+                  };
+                  if (!foundCat.items.some(i => i.code === foundItem.code)) {
+                    foundCat.items.push(foundItem);
+                  }
                 }
 
                 if (!newPeriodLedger[foundCat.id]) {
@@ -2180,7 +2185,7 @@
 
                 const daysCount = getDaysInMonth(targetYear, targetMonth);
                 for (let d = 1; d <= daysCount; d++) {
-                  const dayKey = Object.keys(row).find(k => k.trim() === String(d) || k.trim().toLowerCase() === `day ${d}`);
+                  const dayKey = keys.find(k => k.trim() === String(d) || k.trim().toLowerCase() === `day ${d}`);
                   if (dayKey !== undefined) {
                     const val = Number(row[dayKey]);
                     if (!isNaN(val) && val > 0) {
@@ -2192,7 +2197,6 @@
               });
             });
 
-            // Overwrite period ledger in appState & Firebase
             appState.production[pKey] = newPeriodLedger;
 
             for (const c of appState.categories) {
@@ -2206,7 +2210,7 @@
             closeModal('batch-update-modal');
             refreshCurrentScreen();
 
-            showToast(`Batch update successful! Overwrote ${monthName} ${targetYear} with ${totalMatchedRows} records.`, 'success');
+            showToast(`Batch update successful! Loaded ${totalMatchedRows} records into ${monthName} ${targetYear}.`, 'success');
           } catch (err) {
             console.error(err);
             showToast('Batch update failed. Please check Excel file format.', 'error');
@@ -2216,7 +2220,6 @@
       });
     }
 
-    // OPEN EXCEL IMPORT MODAL & DETECT MONTH
     function openImportModal() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
       document.getElementById('import-file-input').value = '';
@@ -2241,7 +2244,6 @@
       };
     }
 
-    // ROBUST EXCEL IMPORT WITH CODE/NAME MATCHING & FIRESTORE SAVING TO MENTIONED MONTH
     function executeExcelImport() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
       const fileInput = document.getElementById('import-file-input');
@@ -2268,8 +2270,9 @@
           let matchCount = 0;
 
           jsonRows.forEach(row => {
-            const codeKey = Object.keys(row).find(k => /^(code|item\s*code)$/i.test(k.trim()));
-            const nameKey = Object.keys(row).find(k => /^(items?|item\s*name|product)$/i.test(k.trim()));
+            const keys = Object.keys(row);
+            const codeKey = keys.find(k => /^(code|item\s*code|sku)$/i.test(k.trim())) || keys[0];
+            const nameKey = keys.find(k => /^(items?|item\s*name|product|description)$/i.test(k.trim())) || keys[1];
             const code = String(row[codeKey] || '').trim().toUpperCase();
             const name = String(row[nameKey] || '').trim();
             if (!code && !name) return;
@@ -2289,7 +2292,7 @@
               }
             }
 
-            if (!foundCat) {
+            if (!foundCat || !foundItem) {
               foundCat = appState.categories.find(c => c.id === appState.activeCategoryId) || appState.categories[0];
               foundItem = { code: code || ('SKU' + Date.now()), name: name || code, unit: 'PCS' };
               foundCat.items.push(foundItem);
@@ -2304,7 +2307,7 @@
 
             const daysCount = getDaysInMonth(targetYear, targetMonth);
             for (let d = 1; d <= daysCount; d++) {
-              const dayKey = Object.keys(row).find(k => k.trim() === String(d) || k.trim().toLowerCase() === `day ${d}`);
+              const dayKey = keys.find(k => k.trim() === String(d) || k.trim().toLowerCase() === `day ${d}`);
               if (dayKey !== undefined) {
                 const val = Number(row[dayKey]);
                 if (!isNaN(val) && val > 0) {
