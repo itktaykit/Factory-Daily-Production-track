@@ -1260,7 +1260,7 @@
       return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    fn getItemDailyMap(year, month, catId, itemCode) {
+    function getItemDailyMap(year, month, catId, itemCode) {
       const pKey = getPeriodKey(year, month);
       return appState.production?.[pKey]?.[catId]?.[itemCode] || {};
     }
