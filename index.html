@@ -2109,7 +2109,7 @@
       };
     }
 
-    // ROBUST BATCH OVERWRITE & UPDATE FUNCTION (FIXED FOR ALL DATASETS)
+    // BULLETPROOF BATCH OVERWRITE & UPDATE FUNCTION (AUTO-FALLBACK & NO SKIPPING)
     function executeBatchUpdate() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
       const fileInput = document.getElementById('batch-file-input');
@@ -2132,7 +2132,7 @@
             
             const pKey = `${targetYear}-${targetMonth}`;
             const newPeriodLedger = {};
-            let totalMatchedRows = 0;
+            let totalLoadedRows = 0;
 
             wb.SheetNames.forEach(sheetName => {
               const ws = wb.Sheets[sheetName];
@@ -2143,15 +2143,18 @@
                 
                 const codeKey = keys.find(k => /^(code|item\s*code|sku)$/i.test(k.trim())) || keys[0];
                 const nameKey = keys.find(k => /^(items?|item\s*name|product|description)$/i.test(k.trim())) || keys[1];
+                const unitKey = keys.find(k => /^(unit|uom)$/i.test(k.trim()));
                 
                 const code = String(row[codeKey] || '').trim().toUpperCase();
                 const name = String(row[nameKey] || '').trim();
+                const unit = unitKey ? String(row[unitKey] || 'PCS').trim().toUpperCase() : 'PCS';
                 
-                if (!code && !name) return;
+                if (!code && !name) return; // Skip empty rows
 
                 let foundCat = null;
                 let foundItem = null;
 
+                // 1. Try to match by code or name in existing categories
                 for (const c of appState.categories) {
                   const matched = c.items.find(i => 
                     (code && i.code.toUpperCase() === code) || 
@@ -2164,12 +2167,13 @@
                   }
                 }
 
+                // 2. If not found, auto-create it in the active category instead of skipping
                 if (!foundCat || !foundItem) {
                   foundCat = appState.categories.find(c => c.id === appState.activeCategoryId) || appState.categories[0];
                   foundItem = { 
                     code: code || ('SKU' + Math.floor(Math.random() * 90000 + 10000)), 
-                    name: name || code, 
-                    unit: 'PCS' 
+                    name: name || code || 'Unnamed Item', 
+                    unit: unit || 'PCS' 
                   };
                   if (!foundCat.items.some(i => i.code === foundItem.code)) {
                     foundCat.items.push(foundItem);
@@ -2193,7 +2197,7 @@
                     }
                   }
                 }
-                totalMatchedRows++;
+                totalLoadedRows++;
               });
             });
 
@@ -2210,7 +2214,7 @@
             closeModal('batch-update-modal');
             refreshCurrentScreen();
 
-            showToast(`Batch update successful! Loaded ${totalMatchedRows} records into ${monthName} ${targetYear}.`, 'success');
+            showToast(`Batch update successful! Loaded ${totalLoadedRows} rows into ${monthName} ${targetYear}.`, 'success');
           } catch (err) {
             console.error(err);
             showToast('Batch update failed. Please check Excel file format.', 'error');
