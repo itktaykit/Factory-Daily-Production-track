@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-  <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <<title>Ktaykit Factory — Cloud Production Management System</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- QRCode.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- SheetJS (Excel Export & Import) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- jsPDF & jsPDF-AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ktaykit Factory — Cloud Production Management System</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- SheetJS (XLSX) for Excel Import & Export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- jsPDF + AutoTable for PDF Export -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -45,7 +53,6 @@
       color: #0f172a;
     }
 
-    /* Custom Scrollbars for High-Density Spreadsheet */
     .grid-scroll::-webkit-scrollbar {
       height: 10px;
       width: 10px;
@@ -62,7 +69,6 @@
       background: #64748b;
     }
 
-    /* Sticky Column Shadows */
     .sticky-left-shadow {
       box-shadow: 4px 0 8px -2px rgba(15, 23, 42, 0.08);
     }
@@ -70,7 +76,6 @@
       box-shadow: -4px 0 8px -2px rgba(15, 23, 42, 0.08);
     }
 
-    /* Cell Flash Animation on Save */
     @keyframes cellSavedPulse {
       0% { background-color: #bbf7d0; }
       100% { background-color: transparent; }
@@ -79,7 +84,6 @@
       animation: cellSavedPulse 1.1s ease-out;
     }
 
-    /* Print Styles for One-Page Consolidated Report */
     @media print {
       .no-print {
         display: none !important;
@@ -132,7 +136,7 @@
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-orange-500/15 border border-orange-500/30 text-orange-400 text-xs font-semibold tracking-wider uppercase mb-6">
             <i data-lucide="database" class="w-4 h-4"></i>
-            Cloud ERP Database
+            Firebase Direct ERP
           </div>
           <h1 class="text-3xl font-extrabold tracking-tight text-white">
             Ktaykit <span class="text-orange-500">Factory</span>
@@ -145,7 +149,7 @@
         <div class="relative z-10 my-8 space-y-3">
           <div class="flex items-center gap-3 text-xs text-slate-300 bg-slate-800/80 p-3 rounded-xl border border-slate-700/70">
             <i data-lucide="cloud-cog" class="w-5 h-5 text-emerald-400 shrink-0"></i>
-            <span>Firebase Cloud Storage &amp; Real-Time Multi-Device Sync</span>
+            <span>Direct Firebase Firestore (ktaykit-factory) Live Sync</span>
           </div>
           <div class="flex items-center gap-3 text-xs text-slate-300 bg-slate-800/80 p-3 rounded-xl border border-slate-700/70">
             <i data-lucide="shield-check" class="w-5 h-5 text-orange-400 shrink-0"></i>
@@ -158,10 +162,10 @@
         </div>
 
         <div class="relative z-10 text-xs text-slate-400 flex items-center justify-between border-t border-slate-800 pt-4">
-          <span>June 2026 Dataset Preloaded</span>
-          <span id="login-cloud-badge" class="font-mono text-emerald-400 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Cloud Ready
+          <span>Project: ktaykit-factory</span>
+          <span id="login-cloud-badge" class="font-mono text-amber-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            Connecting Firebase...
           </span>
         </div>
       </div>
@@ -173,7 +177,7 @@
             <h2 class="text-2xl font-bold text-slate-900">Operator Sign In</h2>
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
               <i data-lucide="globe" class="w-3.5 h-3.5"></i>
-              Cloud Database Active
+              Direct Firestore DB
             </span>
           </div>
           <p class="text-sm text-slate-500 mt-1">Sign in to access live factory production records worldwide.</p>
@@ -258,7 +262,7 @@
           <div>
             <div class="flex items-center gap-2">
               <span class="font-extrabold text-base tracking-tight">KTAYKIT FACTORY</span>
-              <span class="hidden sm:inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-orange-500/20 text-orange-300 border border-orange-500/30">Cloud Database</span>
+              <span class="hidden sm:inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-orange-500/20 text-orange-300 border border-orange-500/30">Firebase Live</span>
             </div>
             <p class="text-[11px] text-slate-400 hidden sm:block">Real-Time Production &amp; Yield Database</p>
           </div>
@@ -266,10 +270,10 @@
 
         <!-- Global Controls -->
         <div class="flex items-center gap-2.5">
-          <button onclick="openDbInspectorModal()" title="View Cloud Database Architecture & System Info"
+          <button onclick="openDbInspectorModal()" title="View Firebase Database Info"
             class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold transition cursor-pointer">
-            <span id="cloud-status-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span id="cloud-status-text" class="text-slate-200">Cloud Connected • Live</span>
+            <span id="cloud-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="cloud-status-text" class="text-slate-200">Connecting Firebase...</span>
           </button>
 
           <div id="global-period-bar" class="flex items-center gap-2 bg-slate-800/90 p-1.5 rounded-xl border border-slate-700">
@@ -370,11 +374,10 @@
               </div>
               <span class="hidden xl:inline-flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
                 <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-orange-500"></i>
-                Click any date cell to edit &amp; update database
+                Click any date cell to edit &amp; sync to Firebase
               </span>
             </div>
 
-            <!-- Action Toolbar with Explicit Add, Modify and Update Button -->
             <div class="flex items-center gap-2 flex-wrap">
               <button id="btn-main-add-modify" onclick="openQuickEntryModal()"
                 class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer">
@@ -540,7 +543,7 @@
             <button onclick="openDbInspectorModal()"
               class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 transition flex items-center gap-1.5 cursor-pointer">
               <i data-lucide="database" class="w-3.5 h-3.5"></i>
-              Cloud Database Architecture
+              Firebase Database Info
             </button>
             <button onclick="resetToJune2026Sample()"
               class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 transition flex items-center gap-1.5 cursor-pointer">
@@ -616,7 +619,7 @@
         </div>
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('quick-entry-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Database</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Firebase</button>
         </div>
       </form>
     </div>
@@ -644,7 +647,7 @@
         </div>
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('category-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Database</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Firebase</button>
         </div>
       </form>
     </div>
@@ -693,7 +696,7 @@
         </div>
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('product-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Database</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Firebase</button>
         </div>
       </form>
     </div>
@@ -769,7 +772,7 @@
 
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('user-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Database</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Update Firebase</button>
         </div>
       </form>
     </div>
@@ -780,7 +783,7 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <i data-lucide="database" class="w-4 h-4 text-orange-600"></i>
-          Cloud Database Architecture &amp; System Info
+          Firebase Direct Firestore Connection Status
         </h3>
         <button onclick="closeModal('db-inspector-modal')" class="text-slate-400 hover:text-slate-700 cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -792,29 +795,29 @@
           <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
             <div class="text-slate-500 font-semibold">Database Engine</div>
             <div id="db-info-engine" class="text-sm font-extrabold text-slate-900 mt-1">Firebase Cloud Firestore</div>
-            <div id="db-info-status" class="text-[11px] font-mono text-emerald-600 mt-0.5">Live Real-Time Sync Active</div>
+            <div id="db-info-status" class="text-[11px] font-mono text-emerald-600 mt-0.5">Checking...</div>
           </div>
           <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <div class="text-slate-500 font-semibold">Project ID</div>
+            <div class="text-slate-500 font-semibold">Firebase Project ID</div>
             <div id="db-info-appid" class="text-xs font-mono font-bold text-slate-900 mt-1 break-all">ktaykit-factory</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">Connected Firebase Project</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Direct Root Collections</div>
           </div>
           <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <div class="text-slate-500 font-semibold">Authenticated Session UID</div>
-            <div id="db-info-uid" class="text-[11px] font-mono font-bold text-slate-900 mt-1 break-all">Authenticating...</div>
+            <div class="text-slate-500 font-semibold">Connection Mode</div>
+            <div id="db-info-uid" class="text-[11px] font-mono font-bold text-emerald-700 mt-1 break-all">Direct Firestore SDK</div>
           </div>
         </div>
 
         <div class="border border-slate-200 rounded-xl overflow-hidden">
           <div class="bg-slate-900 text-white px-3.5 py-2 font-bold flex items-center justify-between">
-            <span>Firestore Cloud Collections (Live Worldwide Access)</span>
+            <span>Direct Firestore Root Collections (ktaykit-factory)</span>
             <span class="text-[10px] font-mono text-orange-300">Auto-Synced</span>
           </div>
           <table class="w-full text-left border-collapse">
             <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
               <tr>
                 <th class="py-2 px-3 font-bold">Data Domain</th>
-                <th class="py-2 px-3 font-bold">Cloud Collection Path</th>
+                <th class="py-2 px-3 font-bold">Firestore Collection</th>
                 <th class="py-2 px-3 font-bold text-right">Records</th>
               </tr>
             </thead>
@@ -840,8 +843,6 @@
   <!-- ==================== FIREBASE CLOUD & APP SCRIPT ==================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -855,7 +856,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
 
     const RAW_JUNE_2026_DATA = {
       "s1": [
@@ -964,12 +965,8 @@
       "July", "August", "September", "October", "November", "December"
     ];
 
-    const SESSION_KEY = 'ktaykit_erp_v4';
+    const SESSION_KEY = 'ktaykit_erp_direct_v1';
     const appId = firebaseConfig.projectId;
-    
-    let db = null;
-    let auth = null;
-    let firebaseUser = null;
     let cloudConnected = false;
 
     let appState = {
@@ -996,12 +993,18 @@
         txt.textContent = label;
         dot.className = 'w-2 h-2 rounded-full ' + (
           status === 'live' ? 'bg-emerald-400' :
-          status === 'syncing' ? 'bg-sky-400 animate-ping' :
+          status === 'error' ? 'bg-rose-500' :
           'bg-amber-400 animate-pulse'
         );
       }
-      if (loginBadge && status === 'live') {
-        loginBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span>Cloud Connected • Live`;
+      if (loginBadge) {
+        if (status === 'live') {
+          loginBadge.className = 'font-mono text-emerald-400 flex items-center gap-1.5';
+          loginBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span>Firebase Connected • Live`;
+        } else if (status === 'error') {
+          loginBadge.className = 'font-mono text-rose-400 flex items-center gap-1.5';
+          loginBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span>Firestore Rules Blocked`;
+        }
       }
     }
 
@@ -1082,155 +1085,147 @@
       return { categories, production: { '2026-6': juneLedger } };
     }
 
-    function publicCollection(colName) {
-      return collection(db, 'artifacts', appId, 'public', 'data', colName);
+    // DIRECT ROOT FIRESTORE COLLECTIONS FOR ktaykit-factory
+    function rootCollection(colName) {
+      return collection(db, colName);
     }
 
-    function publicDoc(colName, docId) {
-      return doc(db, 'artifacts', appId, 'public', 'data', colName, docId);
+    function rootDoc(colName, docId) {
+      return doc(db, colName, docId);
     }
 
     async function saveUserToCloud(userObj) {
-      if (!db || !firebaseUser) return;
       try {
-        await setDoc(publicDoc('ktaykit_users', userObj.id), userObj);
+        await setDoc(rootDoc('ktaykit_users', userObj.id), userObj);
       } catch (err) {
-        console.warn('User cloud save error:', err);
+        console.error('Firebase User Save Error:', err);
+        showToast('Firebase permission error saving user', 'error');
       }
     }
 
     async function deleteUserFromCloud(userId) {
-      if (!db || !firebaseUser) return;
       try {
-        await deleteDoc(publicDoc('ktaykit_users', userId));
+        await deleteDoc(rootDoc('ktaykit_users', userId));
       } catch (err) {
-        console.warn('User cloud delete error:', err);
+        console.error('Firebase User Delete Error:', err);
       }
     }
 
     async function saveCategoryToCloud(catObj) {
-      if (!db || !firebaseUser) return;
       try {
-        await setDoc(publicDoc('ktaykit_categories', catObj.id), catObj);
+        await setDoc(rootDoc('ktaykit_categories', catObj.id), catObj);
       } catch (err) {
-        console.warn('Category cloud save error:', err);
-      }
-    }
-
-    async function deleteCategoryFromCloud(catId) {
-      if (!db || !firebaseUser) return;
-      try {
-        await deleteDoc(publicDoc('ktaykit_categories', catId));
-      } catch (err) {
-        console.warn('Category cloud delete error:', err);
+        console.error('Firebase Category Save Error:', err);
+        showToast('Firebase permission error saving category', 'error');
       }
     }
 
     async function savePeriodProductionToCloud(periodKey) {
-      if (!db || !firebaseUser) return;
       try {
         const payload = {
           periodKey,
           updatedAt: new Date().toISOString(),
           dataJson: JSON.stringify(appState.production[periodKey] || {})
         };
-        await setDoc(publicDoc('ktaykit_production', periodKey), payload);
+        await setDoc(rootDoc('ktaykit_production', periodKey), payload);
       } catch (err) {
-        console.warn('Production cloud save error:', err);
+        console.error('Firebase Production Save Error:', err);
+        showToast('Firebase sync failed: check Firestore rules', 'error');
       }
     }
 
     async function seedInitialCloudDatabase() {
-      if (!db || !firebaseUser) return;
       try {
         const defaultUsers = getDefaultUsers();
         const initial = buildInitialCatalogAndJune2026Data();
-        for (const u of defaultUsers) await setDoc(publicDoc('ktaykit_users', u.id), u);
-        for (const c of initial.categories) await setDoc(publicDoc('ktaykit_categories', c.id), c);
+        for (const u of defaultUsers) await setDoc(rootDoc('ktaykit_users', u.id), u);
+        for (const c of initial.categories) await setDoc(rootDoc('ktaykit_categories', c.id), c);
         appState.production['2026-6'] = initial.production['2026-6'];
         await savePeriodProductionToCloud('2026-6');
+        showToast('Initial June 2026 database seeded to Firebase!', 'success');
       } catch (err) {
-        console.warn('Cloud seeding warning:', err);
+        console.error('Firebase Seeding Error:', err);
       }
     }
 
-    async function initCloudDatabase() {
+    function initCloudDatabase() {
+      // Load immediate fallback defaults while Firestore snapshot connects
       appState.users = getDefaultUsers();
       const initial = buildInitialCatalogAndJune2026Data();
       appState.categories = initial.categories;
       appState.production = initial.production;
 
-      try {
-        auth = getAuth(app);
-        db = getFirestore(app);
+      const checkAndSeed = async () => {
+        const f = appState.firestoreLoadedFlags;
+        if (f.users && f.categories && f.production && !appState.seedingTriggered) {
+          if (appState.users.length === 0 && appState.categories.length === 0) {
+            appState.seedingTriggered = true;
+            await seedInitialCloudDatabase();
+          }
+        }
+      };
 
-        const cred = await signInAnonymously(auth);
-        firebaseUser = cred.user;
+      const handleFirestoreError = (err) => {
+        console.error('Firestore Connection Error:', err);
+        cloudConnected = false;
+        updateCloudBadge('error', 'Firestore Rules Blocked');
+      };
 
+      // 1. Live Listener: ktaykit_users
+      onSnapshot(rootCollection('ktaykit_users'), (snap) => {
         cloudConnected = true;
-        updateCloudBadge('live', 'Cloud Connected • Live');
+        updateCloudBadge('live', 'Firebase Connected • Live');
+        if (!snap.empty) {
+          appState.users = snap.docs.map(d => d.data());
+        } else if (appState.firestoreLoadedFlags.users) {
+          appState.users = [];
+        }
+        appState.firestoreLoadedFlags.users = true;
+        checkAndSeed();
+        if (appState.currentUser && appState.activeScreen === 'users') {
+          renderUsersScreen();
+          lucide.createIcons();
+        }
+      }, handleFirestoreError);
 
-        const checkAndSeed = async () => {
-          const f = appState.firestoreLoadedFlags;
-          if (f.users && f.categories && f.production && !appState.seedingTriggered) {
-            if (appState.users.length === 0 && appState.categories.length === 0) {
-              appState.seedingTriggered = true;
-              await seedInitialCloudDatabase();
+      // 2. Live Listener: ktaykit_categories
+      onSnapshot(rootCollection('ktaykit_categories'), (snap) => {
+        cloudConnected = true;
+        updateCloudBadge('live', 'Firebase Connected • Live');
+        if (!snap.empty) {
+          const loaded = snap.docs.map(d => d.data());
+          loaded.sort((a, b) => (a.order || 99) - (b.order || 99));
+          appState.categories = loaded;
+        } else if (appState.firestoreLoadedFlags.categories) {
+          appState.categories = [];
+        }
+        appState.firestoreLoadedFlags.categories = true;
+        checkAndSeed();
+        if (appState.currentUser && !appState.editingCell) refreshCurrentScreen();
+      }, handleFirestoreError);
+
+      // 3. Live Listener: ktaykit_production
+      onSnapshot(rootCollection('ktaykit_production'), (snap) => {
+        cloudConnected = true;
+        updateCloudBadge('live', 'Firebase Connected • Live');
+        if (!snap.empty) {
+          const nextProd = {};
+          snap.docs.forEach(d => {
+            const data = d.data();
+            try {
+              nextProd[d.id] = data.dataJson ? JSON.parse(data.dataJson) : {};
+            } catch {
+              nextProd[d.id] = {};
             }
-          }
-        };
-
-        onSnapshot(publicCollection('ktaykit_users'), (snap) => {
-          if (!snap.empty) {
-            appState.users = snap.docs.map(d => d.data());
-          } else if (appState.firestoreLoadedFlags.users) {
-            appState.users = [];
-          }
-          appState.firestoreLoadedFlags.users = true;
-          checkAndSeed();
-          if (appState.currentUser && appState.activeScreen === 'users') {
-            renderUsersScreen();
-            lucide.createIcons();
-          }
-        });
-
-        onSnapshot(publicCollection('ktaykit_categories'), (snap) => {
-          if (!snap.empty) {
-            const loaded = snap.docs.map(d => d.data());
-            loaded.sort((a, b) => (a.order || 99) - (b.order || 99));
-            appState.categories = loaded;
-          } else if (appState.firestoreLoadedFlags.categories) {
-            appState.categories = [];
-          }
-          appState.firestoreLoadedFlags.categories = true;
-          checkAndSeed();
-          if (appState.currentUser && !appState.editingCell) refreshCurrentScreen();
-        });
-
-        onSnapshot(publicCollection('ktaykit_production'), (snap) => {
-          if (!snap.empty) {
-            const nextProd = {};
-            snap.docs.forEach(d => {
-              const data = d.data();
-              try {
-                nextProd[d.id] = data.dataJson ? JSON.parse(data.dataJson) : {};
-              } catch {
-                nextProd[d.id] = {};
-              }
-            });
-            appState.production = nextProd;
-          } else if (appState.firestoreLoadedFlags.production) {
-            appState.production = {};
-          }
-          appState.firestoreLoadedFlags.production = true;
-          checkAndSeed();
-          if (appState.currentUser && !appState.editingCell) refreshCurrentScreen();
-        });
-
-      } catch (err) {
-        console.error('Firebase boot error:', err);
-        updateCloudBadge('offline', 'Offline Fallback');
-      }
+          });
+          appState.production = nextProd;
+        } else if (appState.firestoreLoadedFlags.production) {
+          appState.production = {};
+        }
+        appState.firestoreLoadedFlags.production = true;
+        checkAndSeed();
+        if (appState.currentUser && !appState.editingCell) refreshCurrentScreen();
+      }, handleFirestoreError);
     }
 
     function getDaysInMonth(year, month1Indexed) {
@@ -1716,7 +1711,7 @@
       appState.editingCell = null;
       updateDailyKPIs();
       renderDailyGrid();
-      if (showFeedback) showToast(`Successfully updated Day ${day}: ${formatNumber(parsed)} in Cloud Database`, 'success');
+      if (showFeedback) showToast(`Synced Day ${day}: ${formatNumber(parsed)} to Firebase`, 'success');
       setTimeout(() => { isCommitting = false; }, 60);
     }
 
@@ -1729,7 +1724,7 @@
           await savePeriodProductionToCloud(pKey);
         }
         renderDailyScreen();
-        showToast('Row entries cleared from Cloud', 'info');
+        showToast('Row entries cleared from Firebase', 'info');
       });
     }
 
@@ -1823,7 +1818,7 @@
       const shortMonths = MONTHS.map(m => m.slice(0, 3));
       const container = document.getElementById('yearly-categories-container');
 
-      container.innerHTML = catsToShow.map((cat, idx) => {
+      container.innerHTML = catsToShow.map((cat) => {
         const monthTotals = new Array(12).fill(0);
         let catAnnualTotal = 0;
 
@@ -1875,7 +1870,7 @@
       const canManage = hasActionAccess('catalog');
       const grid = document.getElementById('catalog-grid');
 
-      grid.innerHTML = appState.categories.map((cat, idx) => {
+      grid.innerHTML = appState.categories.map((cat) => {
         const itemsHtml = cat.items.map(item => `
           <tr class="hover:bg-slate-50">
             <td class="py-2 px-3 font-mono font-bold text-slate-700">${item.code}</td>
@@ -1950,7 +1945,7 @@
           cat.items = cat.items.filter(i => i.code !== itemCode);
           await saveCategoryToCloud(cat);
           refreshCurrentScreen();
-          showToast('Product deleted from Cloud', 'info');
+          showToast('Product deleted from Firebase', 'info');
         }
       });
     }
@@ -1978,6 +1973,12 @@
       document.getElementById('user-role').value = user ? user.role : 'Data Entry Operator';
       document.getElementById('user-username').value = user ? user.username : '';
       document.getElementById('user-password').value = user ? user.password : '';
+      if (user) {
+        ['daily', 'monthly', 'yearly', 'catalog', 'users'].forEach(s => { document.getElementById(`perm-screen-${s}`).checked = !!user.screens?.[s]; });
+        ['edit', 'delete', 'catalog', 'io'].forEach(a => { document.getElementById(`perm-act-${a}`).checked = !!user.actions?.[a]; });
+      } else {
+        applyRoleTemplate('Data Entry Operator');
+      }
       document.getElementById('user-modal').classList.remove('hidden');
     }
 
@@ -2000,12 +2001,12 @@
         appState.users = appState.users.filter(u => u.id !== userId);
         await deleteUserFromCloud(userId);
         renderUsersScreen();
-        showToast('User removed from Cloud', 'info');
+        showToast('User removed from Firebase', 'info');
       });
     }
 
     function resetToJune2026Sample() {
-      customConfirm('Reset Database', 'Restore all default categories and June 2026 production quantities?', async () => {
+      customConfirm('Reset Database', 'Restore all default categories and June 2026 production quantities in Firebase?', async () => {
         const initial = buildInitialCatalogAndJune2026Data();
         appState.categories = initial.categories;
         appState.production['2026-6'] = initial.production['2026-6'];
@@ -2018,20 +2019,20 @@
 
         populatePeriodSelectors();
         refreshCurrentScreen();
-        showToast('Restored June 2026 dataset in Cloud', 'success');
+        showToast('Restored June 2026 dataset in Firebase', 'success');
       });
     }
 
     function openDbInspectorModal() {
-      document.getElementById('db-info-engine').textContent = cloudConnected ? 'Firebase Cloud Firestore' : 'Local Memory Mode';
-      document.getElementById('db-info-status').textContent = cloudConnected ? 'Live Real-Time Sync Active' : 'Offline';
+      document.getElementById('db-info-engine').textContent = cloudConnected ? 'Firebase Cloud Firestore' : 'Connecting / Check Rules';
+      document.getElementById('db-info-status').textContent = cloudConnected ? 'Live Real-Time Sync Active' : 'Pending / Rules Check';
       document.getElementById('db-info-appid').textContent = appId;
-      document.getElementById('db-info-uid').textContent = firebaseUser?.uid || 'local-session';
+      document.getElementById('db-info-uid').textContent = cloudConnected ? 'Direct Firestore Root SDK' : 'Disconnected';
 
       const rows = [
-        { domain: 'System Users', path: `artifacts/${appId}/public/data/ktaykit_users`, count: `${appState.users.length} users` },
-        { domain: 'Categories & Products', path: `artifacts/${appId}/public/data/ktaykit_categories`, count: `${appState.categories.length} categories` },
-        { domain: 'Production Ledgers', path: `artifacts/${appId}/public/data/ktaykit_production`, count: `${Object.keys(appState.production).length} periods` }
+        { domain: 'System Users', path: `ktaykit_users`, count: `${appState.users.length} users` },
+        { domain: 'Categories & Products', path: `ktaykit_categories`, count: `${appState.categories.length} categories` },
+        { domain: 'Production Ledgers', path: `ktaykit_production`, count: `${Object.keys(appState.production).length} periods` }
       ];
 
       document.getElementById('db-collections-tbody').innerHTML = rows.map(r => `
@@ -2046,7 +2047,7 @@
     }
 
     function downloadFullJsonBackup() {
-      const backup = { exportedAt: new Date().toISOString(), appId, users: appState.users, categories: appState.categories, production: appState.production };
+      const backup = { exportedAt: new Date().toISOString(), projectId: appId, users: appState.users, categories: appState.categories, production: appState.production };
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -2131,7 +2132,7 @@
           await saveCategoryToCloud(cat);
           await savePeriodProductionToCloud(getPeriodKey());
           refreshCurrentScreen();
-          showToast('Excel imported and synced to Cloud', 'success');
+          showToast('Excel imported and synced to Firebase', 'success');
         } catch (err) {
           showToast('Import failed. Check Excel format.', 'error');
         } finally {
@@ -2260,8 +2261,8 @@
       exportConsolidatedMonthlyPDF, exportYearlyExcel, exportYearlyPDF, closeModal
     });
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      await initCloudDatabase();
+    document.addEventListener('DOMContentLoaded', () => {
+      initCloudDatabase();
 
       document.getElementById('login-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -2284,7 +2285,7 @@
         appState.activeCategoryId = catId;
         closeModal('quick-entry-modal');
         refreshCurrentScreen();
-        showToast(`Successfully updated [${code}] Day ${day}: ${formatNumber(qty)} in Cloud Database`, 'success');
+        showToast(`Synced [${code}] Day ${day}: ${formatNumber(qty)} to Firebase`, 'success');
       });
 
       document.getElementById('category-form').addEventListener('submit', async (e) => {
@@ -2306,7 +2307,7 @@
         }
         closeModal('category-modal');
         refreshCurrentScreen();
-        showToast('Category updated and saved to Cloud Database', 'success');
+        showToast('Category synced to Firebase', 'success');
       });
 
       document.getElementById('product-form').addEventListener('submit', async (e) => {
@@ -2332,7 +2333,7 @@
         await saveCategoryToCloud(targetCat);
         closeModal('product-modal');
         refreshCurrentScreen();
-        showToast('Product updated and saved to Cloud Database', 'success');
+        showToast('Product synced to Firebase', 'success');
       });
 
       document.getElementById('user-form').addEventListener('submit', async (e) => {
@@ -2375,7 +2376,7 @@
         }
         closeModal('user-modal');
         renderUsersScreen();
-        showToast('User updated in Cloud Database', 'success');
+        showToast('User synced to Firebase', 'success');
       });
 
       const savedSession = sessionStorage.getItem(SESSION_KEY);
