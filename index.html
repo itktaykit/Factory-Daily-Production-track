@@ -261,11 +261,11 @@
         <div class="max-w-6xl mx-auto w-full space-y-6">
           <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4 no-print">
             <div>
-              <h2 id="monthly-report-heading" class="text-lg font-black text-slate-900">Monthly Production Summary</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Consolidated breakdown for factory product categories and date ranges.</p>
+              <h2 id="monthly-report-heading" class="text-lg font-black text-slate-900">Monthly &amp; Custom Date Range Summary</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Consolidated production report filtered by category and precise date range.</p>
             </div>
             
-            <!-- Filters for Monthly Report -->
+            <!-- Category & Custom Date Range Filters -->
             <div class="flex flex-wrap items-center gap-3">
               <div>
                 <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Category Filter</label>
@@ -275,22 +275,22 @@
               </div>
               <div class="flex items-center gap-2">
                 <div>
-                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">From Day</label>
-                  <select id="monthly-start-day" onchange="renderMonthlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500"></select>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">From Date</label>
+                  <input id="monthly-start-date" type="date" onchange="renderMonthlyScreen()" class="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500" />
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">To Day</label>
-                  <select id="monthly-end-day" onchange="renderMonthlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500"></select>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">To Date</label>
+                  <input id="monthly-end-date" type="date" onchange="renderMonthlyScreen()" class="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500" />
                 </div>
               </div>
             </div>
 
             <div class="flex items-center gap-2">
-              <button id="btn-monthly-export-excel" onclick="exportAllCategoriesMonthlyExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 cursor-pointer">
-                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Workbook (.xlsx)
+              <button id="btn-monthly-export-excel" onclick="exportCustomRangeMonthlyExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Range Excel (.xlsx)
               </button>
               <button id="btn-monthly-export-pdf" onclick="exportConsolidatedMonthlyPDF()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 cursor-pointer">
-                <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF Report
+                <i data-lucide="file-text" class="w-4 h-4"></i> Export Range PDF Report
               </button>
             </div>
           </div>
@@ -403,7 +403,7 @@
 
   <!-- ==================== MODALS ==================== -->
   
-  <!-- EXCEL IMPORT MODAL WITH UPDATE BUTTON -->
+  <!-- EXCEL IMPORT MODAL WITH MATCHING & UPDATE DATABASE BUTTON -->
   <div id="import-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -421,7 +421,7 @@
           <label class="block font-semibold text-slate-700 mb-1">Select Excel File (.xlsx, .csv)</label>
           <input id="import-file-input" type="file" accept=".xlsx, .xls, .csv"
             class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-slate-50 cursor-pointer" />
-          <p class="text-[11px] text-slate-500 mt-1">Month will be automatically detected from filename if included (e.g. June_2026.xlsx).</p>
+          <p class="text-[11px] text-slate-500 mt-1">Item codes &amp; names will be matched automatically against your catalog and saved to Firebase.</p>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -1120,19 +1120,42 @@
       }
     }
 
-    function computeRowMonthlyStats(year, month, catId, itemCode, startDay = 1, endDay = null) {
+    function computeRowMonthlyStats(year, month, catId, itemCode) {
       const daysCount = getDaysInMonth(year, month);
-      const eDay = endDay || daysCount;
       const dailyMap = getItemDailyMap(year, month, catId, itemCode);
       let total = 0;
-      let countInRange = 0;
-      for (let d = startDay; d <= eDay; d++) {
+      for (let d = 1; d <= daysCount; d++) {
         const v = Number(dailyMap[String(d)] || 0);
         if (!isNaN(v)) total += v;
-        countInRange++;
       }
-      const avg = countInRange > 0 ? total / countInRange : 0;
-      return { total, avg, daysCount: countInRange };
+      const avg = daysCount > 0 ? total / daysCount : 0;
+      return { total, avg, daysCount };
+    }
+
+    function computeCustomDateRangeStats(catId, itemCode, startDateStr, endDateStr) {
+      if (!startDateStr || !endDateStr) return { total: 0, avg: 0, daysCount: 0 };
+      
+      const start = new Date(startDateStr);
+      const end = new Date(endDateStr);
+      if (isNaN(start) || isNaN(end) || start > end) return { total: 0, avg: 0, daysCount: 0 };
+
+      let total = 0;
+      let daysCount = 0;
+      let curr = new Date(start);
+
+      while (curr <= end) {
+        const y = curr.getFullYear();
+        const m = curr.getMonth() + 1;
+        const d = curr.getDate();
+        const dailyMap = getItemDailyMap(y, m, catId, itemCode);
+        const val = Number(dailyMap[String(d)] || 0);
+        total += val;
+        daysCount++;
+        curr.setDate(curr.getDate() + 1);
+      }
+
+      const avg = daysCount > 0 ? total / daysCount : 0;
+      return { total, avg, daysCount };
     }
 
     function showToast(message, type = 'success') {
@@ -1230,11 +1253,24 @@
       document.getElementById('header-user-role').textContent = appState.currentUser.role;
 
       populatePeriodSelectors();
+      initMonthlyDatePickers();
       renderNavigationTabs();
 
       const screenOrder = ['daily', 'monthly', 'yearly', 'catalog', 'users'];
       const firstAllowed = screenOrder.find(s => hasScreenAccess(s)) || 'daily';
       switchScreen(firstAllowed);
+    }
+
+    function initMonthlyDatePickers() {
+      const startInput = document.getElementById('monthly-start-date');
+      const endInput = document.getElementById('monthly-end-date');
+      if (!startInput.value || !endInput.value) {
+        const y = appState.selectedYear;
+        const m = String(appState.selectedMonth).padStart(2, '0');
+        const lastDay = getDaysInMonth(y, appState.selectedMonth);
+        startInput.value = `${y}-${m}-01`;
+        endInput.value = `${y}-${m}-${String(lastDay).padStart(2, '0')}`;
+      }
     }
 
     function populatePeriodSelectors() {
@@ -1249,7 +1285,6 @@
 
       importMonthSel.innerHTML = monthSel.innerHTML;
 
-      // Year Range 2015 to 2040
       let yearsHtml = '';
       for (let y = 2015; y <= 2040; y++) {
         yearsHtml += `<option value="${y}" ${y === appState.selectedYear ? 'selected' : ''}>${y}</option>`;
@@ -1606,36 +1641,17 @@
     }
 
     function renderMonthlyScreen() {
-      const monthName = MONTHS[appState.selectedMonth - 1];
-      const daysCount = getDaysInMonth(appState.selectedYear, appState.selectedMonth);
+      initMonthlyDatePickers();
+      const startDateStr = document.getElementById('monthly-start-date').value;
+      const endDateStr = document.getElementById('monthly-end-date').value;
 
-      // Populate Category filter dropdown
       const catFilter = document.getElementById('monthly-cat-filter');
       const currentCatVal = catFilter.value || 'ALL';
       catFilter.innerHTML = `<option value="ALL">All Categories</option>` +
         appState.categories.map(c => `<option value="${c.id}" ${c.id === currentCatVal ? 'selected' : ''}>${c.name}</option>`).join('');
 
-      // Populate Start & End day dropdowns
-      const startDaySel = document.getElementById('monthly-start-day');
-      const endDaySel = document.getElementById('monthly-end-day');
-      const currentStart = Number(startDaySel.value) || 1;
-      const currentEnd = Number(endDaySel.value) || daysCount;
-
-      let daysOptions = '';
-      for (let d = 1; d <= daysCount; d++) {
-        daysOptions += `<option value="${d}">Day ${d}</option>`;
-      }
-      startDaySel.innerHTML = daysOptions;
-      endDaySel.innerHTML = daysOptions;
-
-      startDaySel.value = Math.min(Math.max(1, currentStart), daysCount);
-      endDaySel.value = Math.min(Math.max(Number(startDaySel.value), currentEnd), daysCount);
-
-      const startDay = Number(startDaySel.value);
-      const endDay = Number(endDaySel.value);
       const selectedCatId = catFilter.value;
-
-      document.getElementById('monthly-report-heading').textContent = `${monthName} ${appState.selectedYear} — Monthly Summary (Days ${startDay} to ${endDay})`;
+      document.getElementById('monthly-report-heading').textContent = `Production Summary (${startDateStr} to ${endDateStr})`;
 
       const catsToShow = selectedCatId === 'ALL' ? appState.categories : appState.categories.filter(c => c.id === selectedCatId);
 
@@ -1643,7 +1659,7 @@
       container.innerHTML = catsToShow.map((cat, idx) => {
         let catTotal = 0;
         const rowsHtml = cat.items.map((item, iIdx) => {
-          const stats = computeRowMonthlyStats(appState.selectedYear, appState.selectedMonth, cat.id, item.code, startDay, endDay);
+          const stats = computeCustomDateRangeStats(cat.id, item.code, startDateStr, endDateStr);
           catTotal += stats.total;
           return `
             <tr class="${iIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/70'} hover:bg-orange-50/40">
@@ -1655,6 +1671,8 @@
             </tr>`;
         }).join('');
 
+        const dummyStats = computeCustomDateRangeStats(cat.id, cat.items[0]?.code || '', startDateStr, endDateStr);
+
         return `
           <div class="border border-slate-200 rounded-2xl overflow-hidden print-card">
             <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
@@ -1662,7 +1680,7 @@
                 <span class="w-6 h-6 rounded-lg bg-orange-600 text-white text-xs font-extrabold flex items-center justify-center">${idx + 1}</span>
                 <h4 class="text-sm font-bold">${cat.name}</h4>
               </div>
-              <span class="text-xs font-mono text-amber-300">Total: <strong>${formatNumber(catTotal)}</strong> | Range Avg: <strong>${formatAverage(catTotal / statsRangeCount(startDay, endDay))}</strong></span>
+              <span class="text-xs font-mono text-amber-300">Total: <strong>${formatNumber(catTotal)}</strong> | Range Daily Avg: <strong>${formatAverage(dummyStats.daysCount > 0 ? catTotal / dummyStats.daysCount : 0)}</strong></span>
             </div>
             <table class="w-full text-xs border-collapse">
               <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
@@ -1679,16 +1697,12 @@
                 <tr>
                   <td colspan="3" class="py-2.5 px-3 text-right">CATEGORY SUBTOTAL (${cat.items.length} ITEMS)</td>
                   <td class="py-2.5 px-3 text-right font-mono text-amber-900 bg-amber-100/80">${formatNumber(catTotal)}</td>
-                  <td class="py-2.5 px-3 text-right font-mono text-emerald-900 bg-emerald-100/80">${formatAverage(catTotal / statsRangeCount(startDay, endDay))}</td>
+                  <td class="py-2.5 px-3 text-right font-mono text-emerald-900 bg-emerald-100/80">${formatAverage(dummyStats.daysCount > 0 ? catTotal / dummyStats.daysCount : 0)}</td>
                 </tr>
               </tfoot>
             </table>
           </div>`;
       }).join('');
-    }
-
-    function statsRangeCount(s, e) {
-      return Math.max(1, (e - s + 1));
     }
 
     function renderYearlyScreen() {
@@ -1710,7 +1724,6 @@
       const catsToShow = selectedCat === 'ALL' ? appState.categories : appState.categories.filter(c => c.id === selectedCat);
       const allShortMonths = MONTHS.map(m => m.slice(0, 3));
       
-      // Filter months by range
       const shortMonths = [];
       const monthIndices = [];
       for (let m = startMonth; m <= endMonth; m++) {
@@ -1988,18 +2001,30 @@
       showToast('Excel exported', 'success');
     }
 
-    function exportAllCategoriesMonthlyExcel() {
+    // CUSTOM DATE RANGE EXCEL EXPORT
+    function exportCustomRangeMonthlyExcel() {
       if (!hasActionAccess('io')) return;
+      const startDateStr = document.getElementById('monthly-start-date').value;
+      const endDateStr = document.getElementById('monthly-end-date').value;
+      const selectedCatId = document.getElementById('monthly-cat-filter').value;
+      const catsToShow = selectedCatId === 'ALL' ? appState.categories : appState.categories.filter(c => c.id === selectedCatId);
+
       const wb = XLSX.utils.book_new();
-      appState.categories.forEach((cat, idx) => {
-        const rows = buildCategoryExportRows(cat, appState.selectedYear, appState.selectedMonth);
+      catsToShow.forEach((cat, idx) => {
+        const header = ['Item Code', 'Item Name', 'Unit', `Total (${startDateStr} to ${endDateStr})`, 'Period Daily Average'];
+        const rows = [header];
+        cat.items.forEach(item => {
+          const stats = computeCustomDateRangeStats(cat.id, item.code, startDateStr, endDateStr);
+          rows.push([item.code, item.name, item.unit, Number(stats.total.toFixed(2)), Number(stats.avg.toFixed(2))]);
+        });
         XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), `${idx + 1}. ${cat.name}`.slice(0, 30));
       });
-      XLSX.writeFile(wb, `Ktaykit_Full_Production_${MONTHS[appState.selectedMonth - 1]}_${appState.selectedYear}.xlsx`);
-      showToast('Full workbook exported', 'success');
+
+      XLSX.writeFile(wb, `Ktaykit_Production_Summary_${startDateStr}_to_${endDateStr}.xlsx`);
+      showToast('Custom range Excel exported successfully!', 'success');
     }
 
-    // OPEN EXCEL IMPORT MODAL & DETECT MONTH FROM FILENAME
+    // OPEN EXCEL IMPORT MODAL & DETECT MONTH
     function openImportModal() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
       document.getElementById('import-file-input').value = '';
@@ -2007,7 +2032,6 @@
       document.getElementById('import-target-year').value = appState.selectedYear;
       document.getElementById('import-modal').classList.remove('hidden');
 
-      // Auto-detect month/year if file selected
       const fileInput = document.getElementById('import-file-input');
       fileInput.onchange = (ev) => {
         const f = ev.target.files[0];
@@ -2025,7 +2049,7 @@
       };
     }
 
-    // EXPLICIT UPDATE BUTTON HANDLER FOR EXCEL IMPORT
+    // ROBUST EXCEL IMPORT WITH CODE/NAME MATCHING & FIRESTORE SAVING
     function executeExcelImport() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
       const fileInput = document.getElementById('import-file-input');
@@ -2046,39 +2070,62 @@
           const sheetName = wb.SheetNames[0];
           const jsonRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval: '' });
           
-          const cat = appState.categories.find(c => c.id === appState.activeCategoryId);
-          if (!cat) return;
-
           const pKey = `${targetYear}-${targetMonth}`;
           if (!appState.production[pKey]) appState.production[pKey] = {};
-          if (!appState.production[pKey][cat.id]) appState.production[pKey][cat.id] = {};
 
-          // Overwrite mode for this month/category
-          appState.production[pKey][cat.id] = {};
+          let matchCount = 0;
 
-          const daysCount = getDaysInMonth(targetYear, targetMonth);
           jsonRows.forEach(row => {
             const codeKey = Object.keys(row).find(k => /^(code|item\s*code)$/i.test(k.trim()));
             const nameKey = Object.keys(row).find(k => /^(items?|item\s*name|product)$/i.test(k.trim()));
             const code = String(row[codeKey] || '').trim().toUpperCase();
             const name = String(row[nameKey] || '').trim();
-            if (!code || !name) return;
+            if (!code && !name) return;
 
-            let item = cat.items.find(i => i.code === code);
-            if (!item) {
-              item = { code, name, unit: 'PCS' };
-              cat.items.push(item);
-            }
+            let foundCat = null;
+            let foundItem = null;
 
-            for (let d = 1; d <= daysCount; d++) {
-              const val = row[String(d)];
-              if (val !== undefined && val !== '' && !isNaN(Number(val)) && Number(val) > 0) {
-                setItemDailyValue(targetYear, targetMonth, cat.id, code, d, Number(val), false);
+            for (const c of appState.categories) {
+              const matched = c.items.find(i => 
+                (code && i.code.toUpperCase() === code) || 
+                (name && i.name.toLowerCase() === name.toLowerCase())
+              );
+              if (matched) {
+                foundCat = c;
+                foundItem = matched;
+                break;
               }
             }
+
+            if (!foundCat) {
+              foundCat = appState.categories.find(c => c.id === appState.activeCategoryId) || appState.categories[0];
+              foundItem = { code: code || ('SKU' + Date.now()), name: name || code, unit: 'PCS' };
+              foundCat.items.push(foundItem);
+            }
+
+            if (!appState.production[pKey][foundCat.id]) {
+              appState.production[pKey][foundCat.id] = {};
+            }
+            if (!appState.production[pKey][foundCat.id][foundItem.code]) {
+              appState.production[pKey][foundCat.id][foundItem.code] = {};
+            }
+
+            const daysCount = getDaysInMonth(targetYear, targetMonth);
+            for (let d = 1; d <= daysCount; d++) {
+              const dayKey = Object.keys(row).find(k => k.trim() === String(d) || k.trim().toLowerCase() === `day ${d}`);
+              if (dayKey !== undefined) {
+                const val = Number(row[dayKey]);
+                if (!isNaN(val) && val > 0) {
+                  appState.production[pKey][foundCat.id][foundItem.code][String(d)] = val;
+                }
+              }
+            }
+            matchCount++;
           });
 
-          await saveCategoryToCloud(cat);
+          for (const c of appState.categories) {
+            await saveCategoryToCloud(c);
+          }
           await savePeriodProductionToCloud(pKey);
 
           appState.selectedYear = targetYear;
@@ -2087,10 +2134,10 @@
           closeModal('import-modal');
           refreshCurrentScreen();
           
-          showToast(`Successfully updated database for ${MONTHS[targetMonth - 1]} ${targetYear}!`, 'success');
+          showToast(`Successfully matched ${matchCount} items and updated Firebase database!`, 'success');
         } catch (err) {
           console.error(err);
-          showToast('Import failed. Check Excel format.', 'error');
+          showToast('Import failed. Please check Excel column names.', 'error');
         }
       };
       reader.readAsArrayBuffer(file);
@@ -2124,32 +2171,34 @@
       if (!hasActionAccess('io')) return;
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-      const monthName = MONTHS[appState.selectedMonth - 1];
-      const startDay = Number(document.getElementById('monthly-start-day').value) || 1;
-      const endDay = Number(document.getElementById('monthly-end-day').value) || getDaysInMonth(appState.selectedYear, appState.selectedMonth);
+      const startDateStr = document.getElementById('monthly-start-date').value;
+      const endDateStr = document.getElementById('monthly-end-date').value;
+      const selectedCatId = document.getElementById('monthly-cat-filter').value;
+      const catsToShow = selectedCatId === 'ALL' ? appState.categories : appState.categories.filter(c => c.id === selectedCatId);
 
       doc.setFontSize(15);
-      doc.text(`KTAYKIT FACTORY — MONTHLY SUMMARY (Days ${startDay}-${endDay})`, 36, 36);
+      doc.text(`KTAYKIT FACTORY — PRODUCTION SUMMARY (${startDateStr} to ${endDateStr})`, 36, 36);
 
       let cursorY = 55;
-      appState.categories.forEach((cat, idx) => {
+      catsToShow.forEach((cat, idx) => {
         if (cursorY > 700) { doc.addPage(); cursorY = 40; }
         doc.setFontSize(11);
         doc.text(`${idx + 1}. ${cat.name}`, 36, cursorY);
         let catTotal = 0;
+        const dummyStats = computeCustomDateRangeStats(cat.id, cat.items[0]?.code || '', startDateStr, endDateStr);
         const body = cat.items.map(item => {
-          const stats = computeRowMonthlyStats(appState.selectedYear, appState.selectedMonth, cat.id, item.code, startDay, endDay);
+          const stats = computeCustomDateRangeStats(cat.id, item.code, startDateStr, endDateStr);
           catTotal += stats.total;
           return [item.code, item.name, item.unit, formatNumber(stats.total), formatAverage(stats.avg)];
         });
-        body.push([{ content: 'SUBTOTAL', colSpan: 3, styles: { fontStyle: 'bold' } }, { content: formatNumber(catTotal), styles: { fontStyle: 'bold', halign: 'right' } }, { content: formatAverage(catTotal / statsRangeCount(startDay, endDay)), styles: { fontStyle: 'bold', halign: 'right' } }]);
+        body.push([{ content: 'SUBTOTAL', colSpan: 3, styles: { fontStyle: 'bold' } }, { content: formatNumber(catTotal), styles: { fontStyle: 'bold', halign: 'right' } }, { content: formatAverage(dummyStats.daysCount > 0 ? catTotal / dummyStats.daysCount : 0), styles: { fontStyle: 'bold', halign: 'right' } }]);
 
         doc.autoTable({ startY: cursorY + 6, head: [['Code', 'Name', 'Unit', 'Total', 'Avg']], body, theme: 'grid', styles: { fontSize: 8, cellPadding: 3 } });
         cursorY = doc.lastAutoTable.finalY + 18;
       });
 
-      doc.save(`Ktaykit_Monthly_Summary_${monthName}.pdf`);
-      showToast('Consolidated PDF exported', 'success');
+      doc.save(`Ktaykit_Production_Summary_${startDateStr}_to_${endDateStr}.pdf`);
+      showToast('Consolidated custom range PDF exported successfully!', 'success');
     }
 
     function exportYearlyExcel() {
@@ -2230,7 +2279,7 @@
       quickLogin, logoutUser, switchScreen, selectCategory, startCellEdit, handleCellKeydown, commitCellEdit,
       clearRowProduction, openQuickEntryModal, populateQuickEntryProducts, openCategoryModal, openProductModal,
       deleteProductItem, openUserModal, applyRoleTemplate, deleteUserAccount, resetToJune2026Sample, openDbInspectorModal,
-      downloadFullJsonBackup, exportCategoryExcel, exportAllCategoriesMonthlyExcel, openImportModal, executeExcelImport, exportCategoryPDF,
+      downloadFullJsonBackup, exportCategoryExcel, exportCustomRangeMonthlyExcel, openImportModal, executeExcelImport, exportCategoryPDF,
       exportConsolidatedMonthlyPDF, exportYearlyExcel, exportYearlyPDF, closeModal, renderMonthlyScreen, renderYearlyScreen
     });
 
