@@ -189,8 +189,11 @@
                 class="pl-9 pr-4 py-1.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold focus:outline-none focus:border-orange-500 w-64 shadow-2xs" />
             </div>
 
-            <!-- Excel Import Modal Trigger & Export Toolbar -->
+            <!-- Excel Import Modal Trigger & Batch Update & Export Toolbar -->
             <div class="flex items-center gap-1.5">
+              <button id="btn-batch-update" onclick="openBatchUpdateModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-2xs flex items-center gap-1.5 cursor-pointer transition" title="Batch Update Whole Month Sheet">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Batch Update
+              </button>
               <button id="btn-import-excel" onclick="openImportModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-2xs flex items-center gap-1.5 cursor-pointer transition">
                 <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Import Excel
               </button>
@@ -235,7 +238,7 @@
               <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Grand Total (All Cats)</div>
               <div id="kpi-grand-total" class="text-base font-black text-orange-400 font-mono mt-0.5">0</div>
             </div>
-            <div id="kpi-period-label" class="text-[10px] font-mono text-slate-400 text-right">June 2026</div>
+            <div id="kpi-period-label" class="text-[10px] font-mono text-slate-400 text-right">November 2026</div>
           </div>
         </div>
 
@@ -320,13 +323,13 @@
                 <div>
                   <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">From Month</label>
                   <select id="yearly-start-month" onchange="renderYearlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500">
-                    <option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                    <option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11" selected>November</option><option value="12">December</option>
                   </select>
                 </div>
                 <div>
                   <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">To Month</label>
                   <select id="yearly-end-month" onchange="renderYearlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500">
-                    <option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12" selected>December</option>
+                    <option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11" selected>November</option><option value="12">December</option>
                   </select>
                 </div>
               </div>
@@ -403,6 +406,57 @@
 
   <!-- ==================== MODALS ==================== -->
   
+  <!-- BATCH UPDATE WHOLE SHEET MODAL -->
+  <div id="batch-update-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="refresh-cw" class="w-5 h-5 text-indigo-600"></i>
+          Batch Update Whole Sheet
+        </h3>
+        <button onclick="closeModal('batch-update-modal')" class="text-slate-400 hover:text-slate-700 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Select Excel / CSV File (.xlsx, .csv)</label>
+          <input id="batch-file-input" type="file" accept=".xlsx, .xls, .csv"
+            class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-slate-50 cursor-pointer" />
+          <p class="text-[11px] text-slate-500 mt-1">Month will be auto-detected from filename if present.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Select Month to Overwrite</label>
+            <select id="batch-target-month" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-semibold">
+              <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+              <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+              <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+              <option value="10">October</option><option value="11" selected>November</option><option value="12">December</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Select Year</label>
+            <select id="batch-target-year" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-semibold"></select>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] leading-relaxed">
+          <strong>Warning:</strong> Clicking <strong>Overwrite &amp; Update</strong> will completely replace all existing production records for the selected month with the contents of this Excel sheet and update the Firebase database.
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+        <button type="button" onclick="closeModal('batch-update-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
+        <button type="button" onclick="executeBatchUpdate()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Overwrite &amp; Update
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- EXCEL IMPORT MODAL WITH MATCHING & UPDATE DATABASE BUTTON -->
   <div id="import-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
@@ -431,7 +485,7 @@
               <option value="1">January</option><option value="2">February</option><option value="3">March</option>
               <option value="4">April</option><option value="5">May</option><option value="6">June</option>
               <option value="7">July</option><option value="8">August</option><option value="9">September</option>
-              <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+              <option value="10">October</option><option value="11" selected>November</option><option value="12">December</option>
             </select>
           </div>
           <div>
@@ -1280,12 +1334,16 @@
       const yearSel = document.getElementById('select-year');
       const importMonthSel = document.getElementById('import-target-month');
       const importYearSel = document.getElementById('import-target-year');
+      const batchMonthSel = document.getElementById('batch-target-month');
+      const batchYearSel = document.getElementById('batch-target-year');
 
       monthSel.innerHTML = MONTHS.map((m, idx) =>
         `<option value="${idx + 1}" ${idx + 1 === appState.selectedMonth ? 'selected' : ''}>${m}</option>`
       ).join('');
 
       importMonthSel.innerHTML = monthSel.innerHTML;
+      batchMonthSel.innerHTML = monthSel.innerHTML;
+      batchMonthSel.value = appState.selectedMonth;
 
       let yearsHtml = '';
       for (let y = 2015; y <= 2040; y++) {
@@ -1293,6 +1351,8 @@
       }
       yearSel.innerHTML = yearsHtml;
       importYearSel.innerHTML = yearsHtml;
+      batchYearSel.innerHTML = yearsHtml;
+      batchYearSel.value = appState.selectedYear;
 
       monthSel.onchange = (e) => {
         appState.selectedMonth = Number(e.target.value);
@@ -1376,6 +1436,7 @@
 
       toggleDisplay('btn-add-category-inline', canCatalog);
       toggleDisplay('btn-main-add-modify', canEdit);
+      toggleDisplay('btn-batch-update', canIO && canEdit);
       toggleDisplay('btn-import-excel', canIO && canEdit);
       toggleDisplay('btn-export-excel', canIO);
       toggleDisplay('btn-export-pdf', canIO);
@@ -2026,6 +2087,135 @@
       showToast('Custom range Excel exported successfully!', 'success');
     }
 
+    // OPEN BATCH UPDATE MODAL & DETECT MONTH
+    function openBatchUpdateModal() {
+      if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
+      document.getElementById('batch-file-input').value = '';
+      document.getElementById('batch-target-month').value = appState.selectedMonth;
+      document.getElementById('batch-target-year').value = appState.selectedYear;
+      document.getElementById('batch-update-modal').classList.remove('hidden');
+
+      const fileInput = document.getElementById('batch-file-input');
+      fileInput.onchange = (ev) => {
+        const f = ev.target.files[0];
+        if (!f) return;
+        const lowerName = f.name.toLowerCase();
+        MONTHS.forEach((m, idx) => {
+          if (lowerName.includes(m.toLowerCase()) || lowerName.includes(m.slice(0, 3).toLowerCase())) {
+            document.getElementById('batch-target-month').value = idx + 1;
+          }
+        });
+        const yMatch = f.name.match(/20\d\d/);
+        if (yMatch) {
+          document.getElementById('batch-target-year').value = yMatch[0];
+        }
+      };
+    }
+
+    // BATCH OVERWRITE & UPDATE WHOLE SHEET INTO FIRESTORE
+    function executeBatchUpdate() {
+      if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
+      const fileInput = document.getElementById('batch-file-input');
+      const file = fileInput.files[0];
+      if (!file) {
+        showToast('Please select an Excel file first.', 'error');
+        return;
+      }
+
+      const targetMonth = Number(document.getElementById('batch-target-month').value);
+      const targetYear = Number(document.getElementById('batch-target-year').value);
+      const monthName = MONTHS[targetMonth - 1];
+
+      customConfirm('Batch Overwrite & Update', `Are you sure you want to completely overwrite the entire sheet for ${monthName} ${targetYear} with this Excel file?`, () => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const wb = XLSX.read(data, { type: 'array' });
+            
+            const pKey = `${targetYear}-${targetMonth}`;
+            // Completely fresh ledger for this period (overwrite)
+            const newPeriodLedger = {};
+            let totalMatchedRows = 0;
+
+            // Iterate over all sheets in the Excel workbook
+            wb.SheetNames.forEach(sheetName => {
+              const jsonRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval: '' });
+              
+              jsonRows.forEach(row => {
+                const codeKey = Object.keys(row).find(k => /^(code|item\s*code)$/i.test(k.trim()));
+                const nameKey = Object.keys(row).find(k => /^(items?|item\s*name|product)$/i.test(k.trim()));
+                const code = String(row[codeKey] || '').trim().toUpperCase();
+                const name = String(row[nameKey] || '').trim();
+                if (!code && !name) return;
+
+                let foundCat = null;
+                let foundItem = null;
+
+                for (const c of appState.categories) {
+                  const matched = c.items.find(i => 
+                    (code && i.code.toUpperCase() === code) || 
+                    (name && i.name.toLowerCase() === name.toLowerCase())
+                  );
+                  if (matched) {
+                    foundCat = c;
+                    foundItem = matched;
+                    break;
+                  }
+                }
+
+                if (!foundCat) {
+                  // Fallback category if not found in catalog
+                  foundCat = appState.categories[0];
+                  foundItem = { code: code || ('SKU' + Date.now()), name: name || code, unit: 'PCS' };
+                  foundCat.items.push(foundItem);
+                }
+
+                if (!newPeriodLedger[foundCat.id]) {
+                  newPeriodLedger[foundCat.id] = {};
+                }
+                if (!newPeriodLedger[foundCat.id][foundItem.code]) {
+                  newPeriodLedger[foundCat.id][foundItem.code] = {};
+                }
+
+                const daysCount = getDaysInMonth(targetYear, targetMonth);
+                for (let d = 1; d <= daysCount; d++) {
+                  const dayKey = Object.keys(row).find(k => k.trim() === String(d) || k.trim().toLowerCase() === `day ${d}`);
+                  if (dayKey !== undefined) {
+                    const val = Number(row[dayKey]);
+                    if (!isNaN(val) && val > 0) {
+                      newPeriodLedger[foundCat.id][foundItem.code][String(d)] = val;
+                    }
+                  }
+                }
+                totalMatchedRows++;
+              });
+            });
+
+            // Overwrite period ledger in appState & Firebase
+            appState.production[pKey] = newPeriodLedger;
+
+            for (const c of appState.categories) {
+              await saveCategoryToCloud(c);
+            }
+            await savePeriodProductionToCloud(pKey);
+
+            appState.selectedYear = targetYear;
+            appState.selectedMonth = targetMonth;
+            populatePeriodSelectors();
+            closeModal('batch-update-modal');
+            refreshCurrentScreen();
+
+            showToast(`Batch update successful! Overwrote ${monthName} ${targetYear} with ${totalMatchedRows} records.`, 'success');
+          } catch (err) {
+            console.error(err);
+            showToast('Batch update failed. Please check Excel file format.', 'error');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
     // OPEN EXCEL IMPORT MODAL & DETECT MONTH
     function openImportModal() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
@@ -2281,8 +2471,9 @@
       quickLogin, logoutUser, switchScreen, selectCategory, startCellEdit, handleCellKeydown, commitCellEdit,
       clearRowProduction, openQuickEntryModal, populateQuickEntryProducts, openCategoryModal, openProductModal,
       deleteProductItem, openUserModal, applyRoleTemplate, deleteUserAccount, resetToJune2026Sample, openDbInspectorModal,
-      downloadFullJsonBackup, exportCategoryExcel, exportCustomRangeMonthlyExcel, openImportModal, executeExcelImport, exportCategoryPDF,
-      exportConsolidatedMonthlyPDF, exportYearlyExcel, exportYearlyPDF, closeModal, renderMonthlyScreen, renderYearlyScreen
+      downloadFullJsonBackup, exportCategoryExcel, exportCustomRangeMonthlyExcel, openBatchUpdateModal, executeBatchUpdate,
+      openImportModal, executeExcelImport, exportCategoryPDF, exportConsolidatedMonthlyPDF, exportYearlyExcel, exportYearlyPDF,
+      closeModal, renderMonthlyScreen, renderYearlyScreen
     });
 
     document.addEventListener('DOMContentLoaded', () => {
