@@ -131,14 +131,14 @@
 
       <!-- Period Selectors & Global Actions -->
       <div class="flex flex-wrap items-center gap-2.5">
-        <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs">
+        <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs">
           <span class="text-slate-400 mr-2 flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5 text-orange-400"></i>Month:</span>
-          <select id="select-month" class="bg-transparent text-white font-bold focus:outline-none cursor-pointer"></select>
+          <select id="select-month" class="bg-slate-900 text-white font-bold focus:outline-none cursor-pointer"></select>
         </div>
 
-        <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs">
+        <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs">
           <span class="text-slate-400 mr-2">Year:</span>
-          <select id="select-year" class="bg-transparent text-white font-bold focus:outline-none cursor-pointer"></select>
+          <select id="select-year" class="bg-slate-900 text-white font-bold focus:outline-none cursor-pointer"></select>
         </div>
 
         <button onclick="openDbInspectorModal()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer" title="Database Inspector">
@@ -189,12 +189,11 @@
                 class="pl-9 pr-4 py-1.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold focus:outline-none focus:border-orange-500 w-64 shadow-2xs" />
             </div>
 
-            <!-- Excel Import/Export & PDF Toolbar -->
+            <!-- Excel Import Modal Trigger & Export Toolbar -->
             <div class="flex items-center gap-1.5">
-              <label id="btn-import-excel" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-2xs flex items-center gap-1.5 cursor-pointer transition">
+              <button id="btn-import-excel" onclick="openImportModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-2xs flex items-center gap-1.5 cursor-pointer transition">
                 <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Import Excel
-                <input type="file" accept=".xlsx, .xls, .csv" onchange="handleExcelImport(event)" class="hidden" />
-              </label>
+              </button>
               <button id="btn-export-excel" onclick="exportCategoryExcel()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 cursor-pointer" title="Export Current Category Excel">
                 <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-400"></i> Excel
               </button>
@@ -263,8 +262,29 @@
           <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4 no-print">
             <div>
               <h2 id="monthly-report-heading" class="text-lg font-black text-slate-900">Monthly Production Summary</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Consolidated breakdown for all factory product categories.</p>
+              <p class="text-xs text-slate-500 mt-0.5">Consolidated breakdown for factory product categories and date ranges.</p>
             </div>
+            
+            <!-- Filters for Monthly Report -->
+            <div class="flex flex-wrap items-center gap-3">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Category Filter</label>
+                <select id="monthly-cat-filter" onchange="renderMonthlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500">
+                  <option value="ALL">All Categories</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">From Day</label>
+                  <select id="monthly-start-day" onchange="renderMonthlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500"></select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">To Day</label>
+                  <select id="monthly-end-day" onchange="renderMonthlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500"></select>
+                </div>
+              </div>
+            </div>
+
             <div class="flex items-center gap-2">
               <button id="btn-monthly-export-excel" onclick="exportAllCategoriesMonthlyExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 cursor-pointer">
                 <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Workbook (.xlsx)
@@ -285,12 +305,34 @@
           <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4 no-print">
             <div>
               <h2 class="text-lg font-black text-slate-900">Yearly Overview (<span id="yearly-title-year">2026</span>)</h2>
-              <p class="text-xs text-slate-500 mt-0.5">12-month annual production ledger per category.</p>
+              <p class="text-xs text-slate-500 mt-0.5">Annual production ledger by category and month range.</p>
             </div>
+            
+            <!-- Filters for Yearly Report -->
+            <div class="flex flex-wrap items-center gap-3">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Category Filter</label>
+                <select id="yearly-cat-filter" onchange="renderYearlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500">
+                  <option value="ALL">All Categories (Separated)</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">From Month</label>
+                  <select id="yearly-start-month" onchange="renderYearlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500">
+                    <option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">To Month</label>
+                  <select id="yearly-end-month" onchange="renderYearlyScreen()" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500">
+                    <option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12" selected>December</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
             <div class="flex items-center gap-2.5">
-              <select id="yearly-cat-filter" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:outline-none focus:border-orange-500">
-                <option value="ALL">All Categories (Separated)</option>
-              </select>
               <button id="btn-yearly-export-excel" onclick="exportYearlyExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer">
                 <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel
               </button>
@@ -360,6 +402,54 @@
   </div>
 
   <!-- ==================== MODALS ==================== -->
+  
+  <!-- EXCEL IMPORT MODAL WITH UPDATE BUTTON -->
+  <div id="import-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-600"></i>
+          Import Excel &amp; Update Database
+        </h3>
+        <button onclick="closeModal('import-modal')" class="text-slate-400 hover:text-slate-700 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Select Excel File (.xlsx, .csv)</label>
+          <input id="import-file-input" type="file" accept=".xlsx, .xls, .csv"
+            class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-slate-50 cursor-pointer" />
+          <p class="text-[11px] text-slate-500 mt-1">Month will be automatically detected from filename if included (e.g. June_2026.xlsx).</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Target Month</label>
+            <select id="import-target-month" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-semibold">
+              <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+              <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+              <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+              <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Target Year</label>
+            <select id="import-target-year" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-semibold"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+        <button type="button" onclick="closeModal('import-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">Cancel</button>
+        <button type="button" onclick="executeExcelImport()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="upload" class="w-3.5 h-3.5"></i> Update Database
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="quick-entry-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1030,16 +1120,19 @@
       }
     }
 
-    function computeRowMonthlyStats(year, month, catId, itemCode) {
+    function computeRowMonthlyStats(year, month, catId, itemCode, startDay = 1, endDay = null) {
       const daysCount = getDaysInMonth(year, month);
+      const eDay = endDay || daysCount;
       const dailyMap = getItemDailyMap(year, month, catId, itemCode);
       let total = 0;
-      for (let d = 1; d <= daysCount; d++) {
+      let countInRange = 0;
+      for (let d = startDay; d <= eDay; d++) {
         const v = Number(dailyMap[String(d)] || 0);
         if (!isNaN(v)) total += v;
+        countInRange++;
       }
-      const avg = daysCount > 0 ? total / daysCount : 0;
-      return { total, avg, daysCount };
+      const avg = countInRange > 0 ? total / countInRange : 0;
+      return { total, avg, daysCount: countInRange };
     }
 
     function showToast(message, type = 'success') {
@@ -1147,10 +1240,14 @@
     function populatePeriodSelectors() {
       const monthSel = document.getElementById('select-month');
       const yearSel = document.getElementById('select-year');
+      const importMonthSel = document.getElementById('import-target-month');
+      const importYearSel = document.getElementById('import-target-year');
 
       monthSel.innerHTML = MONTHS.map((m, idx) =>
         `<option value="${idx + 1}" ${idx + 1 === appState.selectedMonth ? 'selected' : ''}>${m}</option>`
       ).join('');
+
+      importMonthSel.innerHTML = monthSel.innerHTML;
 
       // Year Range 2015 to 2040
       let yearsHtml = '';
@@ -1158,6 +1255,7 @@
         yearsHtml += `<option value="${y}" ${y === appState.selectedYear ? 'selected' : ''}>${y}</option>`;
       }
       yearSel.innerHTML = yearsHtml;
+      importYearSel.innerHTML = yearsHtml;
 
       monthSel.onchange = (e) => {
         appState.selectedMonth = Number(e.target.value);
@@ -1511,15 +1609,41 @@
       const monthName = MONTHS[appState.selectedMonth - 1];
       const daysCount = getDaysInMonth(appState.selectedYear, appState.selectedMonth);
 
-      document.getElementById('monthly-report-heading').textContent = `${monthName} ${appState.selectedYear} — Monthly Production Summary`;
-      document.getElementById('monthly-report-days').textContent = daysCount;
-      document.getElementById('monthly-report-user').textContent = appState.currentUser?.fullName || 'Operator';
+      // Populate Category filter dropdown
+      const catFilter = document.getElementById('monthly-cat-filter');
+      const currentCatVal = catFilter.value || 'ALL';
+      catFilter.innerHTML = `<option value="ALL">All Categories</option>` +
+        appState.categories.map(c => `<option value="${c.id}" ${c.id === currentCatVal ? 'selected' : ''}>${c.name}</option>`).join('');
+
+      // Populate Start & End day dropdowns
+      const startDaySel = document.getElementById('monthly-start-day');
+      const endDaySel = document.getElementById('monthly-end-day');
+      const currentStart = Number(startDaySel.value) || 1;
+      const currentEnd = Number(endDaySel.value) || daysCount;
+
+      let daysOptions = '';
+      for (let d = 1; d <= daysCount; d++) {
+        daysOptions += `<option value="${d}">Day ${d}</option>`;
+      }
+      startDaySel.innerHTML = daysOptions;
+      endDaySel.innerHTML = daysOptions;
+
+      startDaySel.value = Math.min(Math.max(1, currentStart), daysCount);
+      endDaySel.value = Math.min(Math.max(Number(startDaySel.value), currentEnd), daysCount);
+
+      const startDay = Number(startDaySel.value);
+      const endDay = Number(endDaySel.value);
+      const selectedCatId = catFilter.value;
+
+      document.getElementById('monthly-report-heading').textContent = `${monthName} ${appState.selectedYear} — Monthly Summary (Days ${startDay} to ${endDay})`;
+
+      const catsToShow = selectedCatId === 'ALL' ? appState.categories : appState.categories.filter(c => c.id === selectedCatId);
 
       const container = document.getElementById('monthly-categories-container');
-      container.innerHTML = appState.categories.map((cat, idx) => {
+      container.innerHTML = catsToShow.map((cat, idx) => {
         let catTotal = 0;
         const rowsHtml = cat.items.map((item, iIdx) => {
-          const stats = computeRowMonthlyStats(appState.selectedYear, appState.selectedMonth, cat.id, item.code);
+          const stats = computeRowMonthlyStats(appState.selectedYear, appState.selectedMonth, cat.id, item.code, startDay, endDay);
           catTotal += stats.total;
           return `
             <tr class="${iIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/70'} hover:bg-orange-50/40">
@@ -1538,7 +1662,7 @@
                 <span class="w-6 h-6 rounded-lg bg-orange-600 text-white text-xs font-extrabold flex items-center justify-center">${idx + 1}</span>
                 <h4 class="text-sm font-bold">${cat.name}</h4>
               </div>
-              <span class="text-xs font-mono text-amber-300">Total: <strong>${formatNumber(catTotal)}</strong> | Avg: <strong>${formatAverage(catTotal / daysCount)}</strong></span>
+              <span class="text-xs font-mono text-amber-300">Total: <strong>${formatNumber(catTotal)}</strong> | Range Avg: <strong>${formatAverage(catTotal / statsRangeCount(startDay, endDay))}</strong></span>
             </div>
             <table class="w-full text-xs border-collapse">
               <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
@@ -1546,8 +1670,8 @@
                   <th class="py-2.5 px-3 text-left font-bold w-32">Item Code</th>
                   <th class="py-2.5 px-3 text-left font-bold">Item Name</th>
                   <th class="py-2.5 px-3 text-center font-bold w-20">Unit</th>
-                  <th class="py-2.5 px-3 text-right font-bold w-36 bg-amber-50/80 text-amber-900">Monthly Total</th>
-                  <th class="py-2.5 px-3 text-right font-bold w-36 bg-emerald-50/80 text-emerald-900">Monthly Average</th>
+                  <th class="py-2.5 px-3 text-right font-bold w-36 bg-amber-50/80 text-amber-900">Period Total</th>
+                  <th class="py-2.5 px-3 text-right font-bold w-36 bg-emerald-50/80 text-emerald-900">Period Daily Average</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-200">${rowsHtml}</tbody>
@@ -1555,12 +1679,16 @@
                 <tr>
                   <td colspan="3" class="py-2.5 px-3 text-right">CATEGORY SUBTOTAL (${cat.items.length} ITEMS)</td>
                   <td class="py-2.5 px-3 text-right font-mono text-amber-900 bg-amber-100/80">${formatNumber(catTotal)}</td>
-                  <td class="py-2.5 px-3 text-right font-mono text-emerald-900 bg-emerald-100/80">${formatAverage(catTotal / daysCount)}</td>
+                  <td class="py-2.5 px-3 text-right font-mono text-emerald-900 bg-emerald-100/80">${formatAverage(catTotal / statsRangeCount(startDay, endDay))}</td>
                 </tr>
               </tfoot>
             </table>
           </div>`;
       }).join('');
+    }
+
+    function statsRangeCount(s, e) {
+      return Math.max(1, (e - s + 1));
     }
 
     function renderYearlyScreen() {
@@ -1570,31 +1698,41 @@
       const currentVal = filterSel.value || 'ALL';
       filterSel.innerHTML = `<option value="ALL">All Categories (Separated)</option>` +
         appState.categories.map(c => `<option value="${c.id}" ${c.id === currentVal ? 'selected' : ''}>${c.name}</option>`).join('');
-      filterSel.onchange = () => renderYearlyTables();
       renderYearlyTables();
     }
 
     function renderYearlyTables() {
       const year = appState.selectedYear;
       const selectedCat = document.getElementById('yearly-cat-filter').value;
+      const startMonth = Number(document.getElementById('yearly-start-month').value) || 1;
+      const endMonth = Number(document.getElementById('yearly-end-month').value) || 12;
+
       const catsToShow = selectedCat === 'ALL' ? appState.categories : appState.categories.filter(c => c.id === selectedCat);
-      const shortMonths = MONTHS.map(m => m.slice(0, 3));
+      const allShortMonths = MONTHS.map(m => m.slice(0, 3));
+      
+      // Filter months by range
+      const shortMonths = [];
+      const monthIndices = [];
+      for (let m = startMonth; m <= endMonth; m++) {
+        shortMonths.push(allShortMonths[m - 1]);
+        monthIndices.push(m);
+      }
+
       const container = document.getElementById('yearly-categories-container');
 
       container.innerHTML = catsToShow.map((cat) => {
-        const monthTotals = new Array(12).fill(0);
         let catAnnualTotal = 0;
 
         const rowsHtml = cat.items.map((item, iIdx) => {
           let rowYearTotal = 0;
-          const monthCells = shortMonths.map((_, mIdx) => {
-            const mTotal = computeRowMonthlyStats(year, mIdx + 1, cat.id, item.code).total;
+          const monthCells = monthIndices.map((mIdx) => {
+            const mTotal = computeRowMonthlyStats(year, mIdx, cat.id, item.code).total;
             rowYearTotal += mTotal;
-            monthTotals[mIdx] += mTotal;
             return `<td class="py-2 px-2 text-right font-mono border-l border-slate-200 ${mTotal > 0 ? 'text-slate-900 font-semibold' : 'text-slate-300'}">${mTotal > 0 ? formatNumber(mTotal) : '—'}</td>`;
           }).join('');
 
           catAnnualTotal += rowYearTotal;
+          const monthsCount = monthIndices.length;
           return `
             <tr class="${iIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/70'}">
               <td class="py-2 px-3 font-mono font-bold text-slate-700">${item.code}</td>
@@ -1602,15 +1740,15 @@
               <td class="py-2 px-2 text-center font-mono text-slate-500">${item.unit}</td>
               ${monthCells}
               <td class="py-2 px-3 text-right font-mono font-extrabold text-amber-900 bg-amber-50">${formatNumber(rowYearTotal)}</td>
-              <td class="py-2 px-3 text-right font-mono font-bold text-emerald-700 bg-emerald-50">${formatAverage(rowYearTotal / 12)}</td>
+              <td class="py-2 px-3 text-right font-mono font-bold text-emerald-700 bg-emerald-50">${formatAverage(rowYearTotal / monthsCount)}</td>
             </tr>`;
         }).join('');
 
         return `
           <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
             <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
-              <h3 class="text-sm font-bold">${cat.name} — ${year} Annual Ledger</h3>
-              <span class="text-xs font-mono text-amber-300">Annual Total: <strong>${formatNumber(catAnnualTotal)}</strong></span>
+              <h3 class="text-sm font-bold">${cat.name} — Range Total (${MONTHS[startMonth-1]} to ${MONTHS[endMonth-1]} ${year})</h3>
+              <span class="text-xs font-mono text-amber-300">Total: <strong>${formatNumber(catAnnualTotal)}</strong></span>
             </div>
             <table class="w-full text-xs border-collapse">
               <thead class="bg-slate-800 text-white">
@@ -1619,7 +1757,7 @@
                   <th class="py-2.5 px-3 text-left">Item Name</th>
                   <th class="py-2.5 px-2 text-center">Unit</th>
                   ${shortMonths.map(m => `<th class="py-2.5 px-2 text-right font-mono">${m}</th>`).join('')}
-                  <th class="py-2.5 px-3 text-right font-bold text-amber-300">Year Total</th>
+                  <th class="py-2.5 px-3 text-right font-bold text-amber-300">Range Total</th>
                   <th class="py-2.5 px-3 text-right font-bold text-emerald-300">Month Avg</th>
                 </tr>
               </thead>
@@ -1861,28 +1999,44 @@
       showToast('Full workbook exported', 'success');
     }
 
-    // MONTH-AWARE EXCEL IMPORT WITH OVERWRITE & CATEGORY PRESERVATION
-    function handleExcelImport(event) {
+    // OPEN EXCEL IMPORT MODAL & DETECT MONTH FROM FILENAME
+    function openImportModal() {
       if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
-      const file = event.target.files[0];
-      if (!file) return;
+      document.getElementById('import-file-input').value = '';
+      document.getElementById('import-target-month').value = appState.selectedMonth;
+      document.getElementById('import-target-year').value = appState.selectedYear;
+      document.getElementById('import-modal').classList.remove('hidden');
 
-      // Detect month from filename (e.g. "Ktaykit_June_2026.xlsx" or "June")
-      let targetMonth = appState.selectedMonth;
-      let targetYear = appState.selectedYear;
-      const lowerName = file.name.toLowerCase();
-
-      MONTHS.forEach((m, idx) => {
-        if (lowerName.includes(m.toLowerCase()) || lowerName.includes(m.slice(0, 3).toLowerCase())) {
-          targetMonth = idx + 1;
+      // Auto-detect month/year if file selected
+      const fileInput = document.getElementById('import-file-input');
+      fileInput.onchange = (ev) => {
+        const f = ev.target.files[0];
+        if (!f) return;
+        const lowerName = f.name.toLowerCase();
+        MONTHS.forEach((m, idx) => {
+          if (lowerName.includes(m.toLowerCase()) || lowerName.includes(m.slice(0, 3).toLowerCase())) {
+            document.getElementById('import-target-month').value = idx + 1;
+          }
+        });
+        const yMatch = f.name.match(/20\d\d/);
+        if (yMatch) {
+          document.getElementById('import-target-year').value = yMatch[0];
         }
-      });
+      };
+    }
 
-      // Match year if present in filename
-      const yearMatch = file.name.match(/20\d\d/);
-      if (yearMatch) {
-        targetYear = parseInt(yearMatch[0], 10);
+    // EXPLICIT UPDATE BUTTON HANDLER FOR EXCEL IMPORT
+    function executeExcelImport() {
+      if (!hasActionAccess('io') || !hasActionAccess('edit')) return;
+      const fileInput = document.getElementById('import-file-input');
+      const file = fileInput.files[0];
+      if (!file) {
+        showToast('Please select an Excel file first.', 'error');
+        return;
       }
+
+      const targetMonth = Number(document.getElementById('import-target-month').value);
+      const targetYear = Number(document.getElementById('import-target-year').value);
 
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -1910,7 +2064,6 @@
             const name = String(row[nameKey] || '').trim();
             if (!code || !name) return;
 
-            // Ensure SKU exists in category without deleting other items
             let item = cat.items.find(i => i.code === code);
             if (!item) {
               item = { code, name, unit: 'PCS' };
@@ -1925,21 +2078,19 @@
             }
           });
 
-          // Sync updated categories and production to Firebase
           await saveCategoryToCloud(cat);
           await savePeriodProductionToCloud(pKey);
 
           appState.selectedYear = targetYear;
           appState.selectedMonth = targetMonth;
           populatePeriodSelectors();
+          closeModal('import-modal');
           refreshCurrentScreen();
           
-          showToast(`Successfully imported & overwritten for ${MONTHS[targetMonth - 1]} ${targetYear}!`, 'success');
+          showToast(`Successfully updated database for ${MONTHS[targetMonth - 1]} ${targetYear}!`, 'success');
         } catch (err) {
           console.error(err);
           showToast('Import failed. Check Excel format.', 'error');
-        } finally {
-          event.target.value = '';
         }
       };
       reader.readAsArrayBuffer(file);
@@ -1974,10 +2125,11 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
       const monthName = MONTHS[appState.selectedMonth - 1];
-      const daysCount = getDaysInMonth(appState.selectedYear, appState.selectedMonth);
+      const startDay = Number(document.getElementById('monthly-start-day').value) || 1;
+      const endDay = Number(document.getElementById('monthly-end-day').value) || getDaysInMonth(appState.selectedYear, appState.selectedMonth);
 
       doc.setFontSize(15);
-      doc.text('KTAYKIT FACTORY — MONTHLY PRODUCTION SUMMARY', 36, 36);
+      doc.text(`KTAYKIT FACTORY — MONTHLY SUMMARY (Days ${startDay}-${endDay})`, 36, 36);
 
       let cursorY = 55;
       appState.categories.forEach((cat, idx) => {
@@ -1986,11 +2138,11 @@
         doc.text(`${idx + 1}. ${cat.name}`, 36, cursorY);
         let catTotal = 0;
         const body = cat.items.map(item => {
-          const stats = computeRowMonthlyStats(appState.selectedYear, appState.selectedMonth, cat.id, item.code);
+          const stats = computeRowMonthlyStats(appState.selectedYear, appState.selectedMonth, cat.id, item.code, startDay, endDay);
           catTotal += stats.total;
           return [item.code, item.name, item.unit, formatNumber(stats.total), formatAverage(stats.avg)];
         });
-        body.push([{ content: 'SUBTOTAL', colSpan: 3, styles: { fontStyle: 'bold' } }, { content: formatNumber(catTotal), styles: { fontStyle: 'bold', halign: 'right' } }, { content: formatAverage(catTotal / daysCount), styles: { fontStyle: 'bold', halign: 'right' } }]);
+        body.push([{ content: 'SUBTOTAL', colSpan: 3, styles: { fontStyle: 'bold' } }, { content: formatNumber(catTotal), styles: { fontStyle: 'bold', halign: 'right' } }, { content: formatAverage(catTotal / statsRangeCount(startDay, endDay)), styles: { fontStyle: 'bold', halign: 'right' } }]);
 
         doc.autoTable({ startY: cursorY + 6, head: [['Code', 'Name', 'Unit', 'Total', 'Avg']], body, theme: 'grid', styles: { fontSize: 8, cellPadding: 3 } });
         cursorY = doc.lastAutoTable.finalY + 18;
@@ -2003,36 +2155,54 @@
     function exportYearlyExcel() {
       if (!hasActionAccess('io')) return;
       const year = appState.selectedYear;
+      const startMonth = Number(document.getElementById('yearly-start-month').value) || 1;
+      const endMonth = Number(document.getElementById('yearly-end-month').value) || 12;
       const wb = XLSX.utils.book_new();
-      const shortMonths = MONTHS.map(m => m.slice(0, 3));
+      const allShortMonths = MONTHS.map(m => m.slice(0, 3));
+      
+      const shortMonths = [];
+      const monthIndices = [];
+      for (let m = startMonth; m <= endMonth; m++) {
+        shortMonths.push(allShortMonths[m - 1]);
+        monthIndices.push(m);
+      }
 
       appState.categories.forEach((cat, idx) => {
-        const rows = [['Code', 'Item Name', 'Unit', ...shortMonths, 'Yearly Total', 'Monthly Average']];
+        const rows = [['Code', 'Item Name', 'Unit', ...shortMonths, 'Range Total', 'Monthly Average']];
         cat.items.forEach(item => {
           let yTotal = 0;
-          const mVals = shortMonths.map((_, mIdx) => {
-            const v = computeRowMonthlyStats(year, mIdx + 1, cat.id, item.code).total;
+          const mVals = monthIndices.map((mIdx) => {
+            const v = computeRowMonthlyStats(year, mIdx, cat.id, item.code).total;
             yTotal += v;
             return v;
           });
-          rows.push([item.code, item.name, item.unit, ...mVals, yTotal, Number((yTotal / 12).toFixed(2))]);
+          rows.push([item.code, item.name, item.unit, ...mVals, yTotal, Number((yTotal / monthIndices.length).toFixed(2))]);
         });
         XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), `${idx + 1}. ${cat.name}`.slice(0, 30));
       });
 
-      XLSX.writeFile(wb, `Ktaykit_Annual_${year}.xlsx`);
+      XLSX.writeFile(wb, `Ktaykit_Annual_Range_${year}.xlsx`);
       showToast('Yearly Excel exported', 'success');
     }
 
     function exportYearlyPDF() {
       if (!hasActionAccess('io')) return;
       const year = appState.selectedYear;
+      const startMonth = Number(document.getElementById('yearly-start-month').value) || 1;
+      const endMonth = Number(document.getElementById('yearly-end-month').value) || 12;
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
-      const shortMonths = MONTHS.map(m => m.slice(0, 3));
+      const allShortMonths = MONTHS.map(m => m.slice(0, 3));
+
+      const shortMonths = [];
+      const monthIndices = [];
+      for (let m = startMonth; m <= endMonth; m++) {
+        shortMonths.push(allShortMonths[m - 1]);
+        monthIndices.push(m);
+      }
 
       doc.setFontSize(14);
-      doc.text(`KTAYKIT FACTORY — ANNUAL REPORT (${year})`, 28, 32);
+      doc.text(`KTAYKIT FACTORY — ANNUAL REPORT (${MONTHS[startMonth-1]} to ${MONTHS[endMonth-1]} ${year})`, 28, 32);
 
       let cursorY = 48;
       appState.categories.forEach((cat, idx) => {
@@ -2041,18 +2211,18 @@
         doc.text(`${idx + 1}. ${cat.name}`, 28, cursorY);
         const body = cat.items.map(item => {
           let yTotal = 0;
-          const mCells = shortMonths.map((_, mIdx) => {
-            const v = computeRowMonthlyStats(year, mIdx + 1, cat.id, item.code).total;
+          const mCells = monthIndices.map((mIdx) => {
+            const v = computeRowMonthlyStats(year, mIdx, cat.id, item.code).total;
             yTotal += v;
             return v > 0 ? formatNumber(v) : '-';
           });
-          return [item.code, item.name, item.unit, ...mCells, formatNumber(yTotal), formatAverage(yTotal / 12)];
+          return [item.code, item.name, item.unit, ...mCells, formatNumber(yTotal), formatAverage(yTotal / monthIndices.length)];
         });
-        doc.autoTable({ startY: cursorY + 5, head: [['Code', 'Name', 'Unit', ...shortMonths, 'Year Total', 'Month Avg']], body, theme: 'grid', styles: { fontSize: 6.5, cellPadding: 2.5 } });
+        doc.autoTable({ startY: cursorY + 5, head: [['Code', 'Name', 'Unit', ...shortMonths, 'Range Total', 'Month Avg']], body, theme: 'grid', styles: { fontSize: 6.5, cellPadding: 2.5 } });
         cursorY = doc.lastAutoTable.finalY + 18;
       });
 
-      doc.save(`Ktaykit_Annual_${year}.pdf`);
+      doc.save(`Ktaykit_Annual_Range_${year}.pdf`);
       showToast('Yearly PDF exported', 'success');
     }
 
@@ -2060,8 +2230,8 @@
       quickLogin, logoutUser, switchScreen, selectCategory, startCellEdit, handleCellKeydown, commitCellEdit,
       clearRowProduction, openQuickEntryModal, populateQuickEntryProducts, openCategoryModal, openProductModal,
       deleteProductItem, openUserModal, applyRoleTemplate, deleteUserAccount, resetToJune2026Sample, openDbInspectorModal,
-      downloadFullJsonBackup, exportCategoryExcel, exportAllCategoriesMonthlyExcel, handleExcelImport, exportCategoryPDF,
-      exportConsolidatedMonthlyPDF, exportYearlyExcel, exportYearlyPDF, closeModal
+      downloadFullJsonBackup, exportCategoryExcel, exportAllCategoriesMonthlyExcel, openImportModal, executeExcelImport, exportCategoryPDF,
+      exportConsolidatedMonthlyPDF, exportYearlyExcel, exportYearlyPDF, closeModal, renderMonthlyScreen, renderYearlyScreen
     });
 
     document.addEventListener('DOMContentLoaded', () => {
