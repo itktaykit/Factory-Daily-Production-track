@@ -845,31 +845,25 @@
     </div>
   </div>
 
-  <!-- ==================== FIREBASE CLOUD SCRIPT ==================== -->
-// 1. Correct CDN imports for a browser-native ESM environment
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  <!-- ==================== FIREBASE CLOUD & APP SCRIPT ==================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// 2. Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDC9j-vKoWRUnVlwLHwTSGkpfGfmQL73JA",
-  authDomain: "ktaykit-factory.firebaseapp.com",
-  projectId: "ktaykit-factory",
-  storageBucket: "ktaykit-factory.firebasestorage.app",
-  messagingSenderId: "994021467636",
-  appId: "1:994021467636:web:ea37b9f36ceb70bb56c5a1",
-  measurementId: "G-SVRBH2G1G4"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyDC9j-vKoWRUnVlwLHwTSGkpfGfmQL73JA",
+      authDomain: "ktaykit-factory.firebaseapp.com",
+      projectId: "ktaykit-factory",
+      storageBucket: "ktaykit-factory.firebasestorage.app",
+      messagingSenderId: "994021467636",
+      appId: "1:994021467636:web:ea37b9f36ceb70bb56c5a1",
+      measurementId: "G-SVRBH2G1G4"
+    };
 
-// 3. Initialize Firebase & Analytics
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-// ... The rest of your existing code continues here ...
-
-
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
 
     const RAW_JUNE_2026_DATA = {
       "s1": [
@@ -1175,7 +1169,6 @@ const analytics = getAnalytics(app);
       appState.production = initial.production;
 
       try {
-        const app = initializeApp(firebaseConfig);
         auth = getAuth(app);
         db = getFirestore(app);
 
@@ -1267,7 +1260,7 @@ const analytics = getAnalytics(app);
       return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    function getItemDailyMap(year, month, catId, itemCode) {
+    fn getItemDailyMap(year, month, catId, itemCode) {
       const pKey = getPeriodKey(year, month);
       return appState.production?.[pKey]?.[catId]?.[itemCode] || {};
     }
